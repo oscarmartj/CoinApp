@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recordar_inicio_de_sesi_n">Recordar inicio de sesión</string>
+    <string name="iniciar_sesion_tras_registro">¡Se ha registrado correctamente! Inicie sesión ahora</string>
+</resources>

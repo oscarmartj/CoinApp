@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">CoinApp</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Correo electrónico</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="action_sign_in">Iniciar sesión</string>
+    <string name="action_sign_in_short">Iniciar sesión</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Correo electrónico no válido</string>
+    <string name="invalid_password">La contraseña debe tener >5 caracteres</string>
+    <string name="login_failed">"Inicio de sesión fallido"</string>
+    <string name="recordar_inicio_de_sesi_n">Recordar inicio de sesión</string>
+    <string name="registro">Registro</string>
+    <string name="iniciar_sesion_tras_registro">¡Se ha registrado correctamente! Inicie sesión ahora</string>
 </resources>
