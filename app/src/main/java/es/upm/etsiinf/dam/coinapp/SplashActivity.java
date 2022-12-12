@@ -48,7 +48,7 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            // Si el usuario no está registrado y conectado, iniciar la pantalla de inicio de sesión despues de la splash
+            // Si el usuario esta registrado y no conectado, iniciar la pantalla de inicio de sesión despues de la splash
 
 
         MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.heartbeatsound);

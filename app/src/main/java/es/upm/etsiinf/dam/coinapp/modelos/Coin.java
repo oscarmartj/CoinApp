@@ -1,5 +1,6 @@
 package es.upm.etsiinf.dam.coinapp.modelos;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -33,6 +34,8 @@ public class Coin implements Parcelable {
     private String atl_date;
     private Roi roi;
     private String last_updated;
+
+    private Bitmap imageBitmap;
 
 
     protected Coin(Parcel in) {
@@ -272,6 +275,14 @@ public class Coin implements Parcelable {
 
     public void setLast_updated (String last_updated) {
         this.last_updated = last_updated;
+    }
+
+    public Bitmap getImageBitmap () {
+        return imageBitmap;
+    }
+
+    public void setImageBitmap (Bitmap imageBitmap) {
+        this.imageBitmap = imageBitmap;
     }
 
     public static class Roi implements Parcelable {

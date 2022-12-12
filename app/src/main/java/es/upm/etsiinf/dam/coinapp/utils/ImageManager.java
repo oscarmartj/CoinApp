@@ -19,6 +19,8 @@ public class ImageManager {
         this.imageURL = imageURL;
     }
 
+    public ImageManager(){}
+
     public static ImageManager getInstance(String imageURL) {
         if (!instance.imageURL.equals(imageURL)) {
             instance = new ImageManager(imageURL);
@@ -47,5 +49,9 @@ public class ImageManager {
         bitmap.compress(Bitmap.CompressFormat.PNG,100, stream);
 
         return stream.toByteArray();
+    }
+
+    public Bitmap getBitmapFromBLOB(byte[] image){
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 }
