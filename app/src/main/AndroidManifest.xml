@@ -22,8 +22,6 @@
                 android:value="" />
         </activity>
 
-        <data android:name="es.upm.etsiinf.dam.coinapp" />
-
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false"

@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -62,16 +63,24 @@ public class SplashActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case 0:
+                        Log.i("handleMessage","Entra en el case 0 del handler");
                         // Almacenar los datos de las criptomonedas recibidas
                         coins = (List<Coin>) msg.obj;
                         // Iniciar la actividad principal
                         Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                         Parcelable[] coinsArray = coins.toArray(new Coin[coins.size()]);
+                        Log.i("CoinLog",coinsArray.length+""+coins.get(29).getSymbol());
                         intent.putExtra("coins",coinsArray);
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         mediaPlayer.stop();
                         startActivityForResult(intent, Activity.RESULT_OK);
                         break;
                     case 1:
+                        Log.i("handleMessage","Entra en el case 1 del handler");
                         Toast toast = Toast.makeText(getApplicationContext(), "No tiene acceso a internet.", Toast.LENGTH_SHORT);
                         toast.show();
                         break;
@@ -79,6 +88,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
 
+        Log.i("Main","Antes de crear el thread");
         Thread thread = new Thread(new CoinGeckoThread(1, handler));
         thread.start();
         try {
