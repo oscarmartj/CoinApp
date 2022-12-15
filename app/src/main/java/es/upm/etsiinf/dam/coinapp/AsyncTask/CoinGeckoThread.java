@@ -25,7 +25,7 @@ import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 public class CoinGeckoThread implements Runnable {
 
-    private static final String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&per_page=30&";
+    private static final String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&per_page=50&";
     private int page;
     private Handler handler;
     private int maxPages = 20;

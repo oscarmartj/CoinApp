@@ -1,62 +1,52 @@
-package es.upm.etsiinf.dam.coinapp.ui.login;
+package es.upm.etsiinf.dam.coinapp.register.ui.login;
 
 import android.app.Activity;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.service.voice.VoiceInteractionSession;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.NoSuchAlgorithmException;
-
 import es.upm.etsiinf.dam.coinapp.R;
-import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
-import es.upm.etsiinf.dam.coinapp.register.ui.login.RegisterActivity;
-import es.upm.etsiinf.dam.coinapp.ui.login.LoginViewModel;
-import es.upm.etsiinf.dam.coinapp.ui.login.LoginViewModelFactory;
-import es.upm.etsiinf.dam.coinapp.databinding.ActivityLoginBinding;
-import es.upm.etsiinf.dam.coinapp.utils.Security;
+import es.upm.etsiinf.dam.coinapp.databinding.ActivityRegisterBinding;
+import es.upm.etsiinf.dam.coinapp.register.ui.login.LoginViewModel;
+import es.upm.etsiinf.dam.coinapp.register.ui.login.LoginViewModelFactory;
 
-public class LoginActivity extends AppCompatActivity {
+
+public class RegisterActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
-    private ActivityLoginBinding binding;
+    private ActivityRegisterBinding binding;
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory(this))
+        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
         final EditText usernameEditText = binding.username;
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
-        final CheckBox rememberMeCheckBox = binding.rememberMe;
-        final Button registerButton = binding.register;
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -85,28 +75,12 @@ public class LoginActivity extends AppCompatActivity {
                     showLoginFailed(loginResult.getError());
                 }
                 if(loginResult.getSuccess() != null) {
-                    //Si se da al checkbox para recordar el inicio de sesión
-                    if(rememberMeCheckBox.isChecked()){
-                        SharedPreferences.Editor editor = getSharedPreferences("user_preferences",MODE_PRIVATE).edit();
-                        String token= null;
-                        try {
-                            token = new Security().encryptPassword(loginResult.getSuccess().getDisplayName());
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        }
-                        editor.putString("access_token", token);
-                        editor.apply();
-                    }else{
-                        SharedPreferences.Editor editor = getSharedPreferences("user_preferences",MODE_PRIVATE).edit();
-                        editor.putString("access_token","");
-                        editor.apply();
-
-                    }
                     updateUiWithUser(loginResult.getSuccess());
-                    setResult(Activity.RESULT_OK);
-                    //Complete and destroy login activity once successful
-                    finish();
                 }
+                setResult(Activity.RESULT_OK);
+
+                //Complete and destroy login activity once successful
+                finish();
             }
         });
 
@@ -149,24 +123,6 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
-
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View view) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivityForResult(intent,Activity.RESULT_OK);
-
-            }
-        });
-    }
-
-    @Override
-    protected void onActivityResult (int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==Activity.RESULT_OK && resultCode== Activity.RESULT_OK){
-            Toast.makeText(getApplicationContext(), getString(R.string.iniciar_sesion_tras_registro), Toast.LENGTH_LONG).show();
-        }
     }
 
     private void updateUiWithUser (LoggedInUserView model) {

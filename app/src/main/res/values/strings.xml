@@ -12,4 +12,8 @@
     <string name="recordar_inicio_de_sesi_n">Recordar inicio de sesión</string>
     <string name="registro">Registro</string>
     <string name="iniciar_sesion_tras_registro">¡Se ha registrado correctamente! Inicie sesión ahora</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="prompt_username">Nombre de usuario</string>
+    <string name="action_register">Finalizar registro</string>
+    <string name="action_register_short">Finalizar registro</string>
 </resources>
