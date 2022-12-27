@@ -1,7 +1,5 @@
 package es.upm.etsiinf.dam.coinapp.ui.login;
 
-import android.app.Activity;
-
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,11 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Parcelable;
-import android.service.voice.VoiceInteractionSession;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -29,19 +24,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 import es.upm.etsiinf.dam.coinapp.MainActivity;
 import es.upm.etsiinf.dam.coinapp.R;
-import es.upm.etsiinf.dam.coinapp.SplashActivity;
 import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
-import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.register.ui.login.RegisterActivity;
-import es.upm.etsiinf.dam.coinapp.ui.login.LoginViewModel;
-import es.upm.etsiinf.dam.coinapp.ui.login.LoginViewModelFactory;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityLoginBinding;
-import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.Security;
 import es.upm.etsiinf.dam.coinapp.utils.Usernames;
 
@@ -50,7 +39,6 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
 
-    private List<Coin> coins;
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -59,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        coins= DataManager.getCoinsFromIntent(getIntent());
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory(this))
                 .get(LoginViewModel.class);
@@ -179,7 +166,6 @@ public class LoginActivity extends AppCompatActivity {
 
         //preparar el intent
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        DataManager.setCoinsInIntent(this.coins,intent);
         startActivity(intent);
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
         finish();

@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
+import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 public class CoinGeckoThread implements Runnable {
 
-    private static final String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&per_page=50&";
+    private static final String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&per_page=10&";
     private int page;
     private Handler handler;
     private int maxPages = 20;
@@ -103,6 +105,13 @@ public class CoinGeckoThread implements Runnable {
                         coin.setName(name);
                         coin.setSymbol(symbol);
                         coin.setImage(image);
+                        if(!image.isEmpty()) {
+                            ImageManager imageManager = new ImageManager();
+                            Log.wtf("ImageBytes", imageManager.toString());
+                            Log.wtf("ImageBytes", image);
+                            coin.setImageBitmap(imageManager.getBitmapFromURL(image));
+                            coin.setImageBytes(imageManager.getBytesFromBitmap(coin.getImageBitmap()));
+                        }
                         coin.setCurrent_price(current_price);
                         coin.setMarket_cap(market_cap);
                         coin.setMarket_cap_rank(market_cap_rank);

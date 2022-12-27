@@ -1,13 +1,16 @@
 package es.upm.etsiinf.dam.coinapp.database;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class CoinDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "CoinDatabase";
 
-    private static final int DATABASE_VERSION = 1;
+    private static int DATABASE_VERSION = 1;
 
     public static final String TABLE_NAME = "coins";
 
@@ -37,6 +40,7 @@ public class CoinDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ATL_DATE = "atl_date";
     public static final String COLUMN_ROI = "roi";
     public static final String COLUMN_LAST_UPDATED = "last_updated";
+    public static final String COLUMN_IMAGE_BITMAP = "image_bitmap";
 
     private static final String SQL_CREATE_TABLE_COINS =
             "CREATE TABLE " + TABLE_NAME + "("
@@ -65,7 +69,9 @@ public class CoinDatabaseHelper extends SQLiteOpenHelper {
                     + COLUMN_ATL_CHANGE_PERCENTAGE + " REAL,"
                     + COLUMN_ATL_DATE + " TEXT,"
                     + COLUMN_ROI + " TEXT,"
-                    + COLUMN_LAST_UPDATED + " TEXT)";
+                    + COLUMN_LAST_UPDATED + " TEXT,"
+                    + COLUMN_IMAGE_BITMAP + " TEXT)";
+
 
     public CoinDatabaseHelper(Context context){
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -78,7 +84,22 @@ public class CoinDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.wtf("DBHelper", "oldVersion "+oldVersion+ " "+ "newVersion "+newVersion);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
+
+    public void saveDatabaseVersion(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("database_version", DATABASE_VERSION);
+        editor.apply();
+    }
+
+    public int getSavedDatabaseVersion(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("database_version", DATABASE_VERSION);
+    }
+
+
 }

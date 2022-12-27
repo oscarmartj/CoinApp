@@ -2,27 +2,40 @@ package es.upm.etsiinf.dam.coinapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Arrays;
 import java.util.List;
 
+import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
-import es.upm.etsiinf.dam.coinapp.utils.DataManager;
+import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private List<Coin> coins;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        coins = DataManager.getCoinsFromIntent(getIntent());
         TextView tw = findViewById(R.id.textview_cripto);
+        ImageView iw = findViewById(R.id.imageView);
+        ImageView iw2 = findViewById(R.id.imageView2);
 
-        tw.setText(coins.get(0).getId());
+        CoinDB db = new CoinDB(this);
+        List<Coin> coins = db.getCoinsMarketCapRange(1,2);
+
+        Bitmap bitmap = new ImageManager().getBitmapFromBLOB(coins.get(0).getImageBytes());
+        iw.setImageBitmap(bitmap);
+
+        Bitmap bitmap2 = new ImageManager().getBitmapFromBLOB(coins.get(1).getImageBytes());
+        iw2.setImageBitmap(bitmap2);
+
+
+        tw.setText((int) coins.get(0).getCurrent_price()+"");
     }
 
 

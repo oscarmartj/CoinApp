@@ -7,7 +7,7 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Coin implements Parcelable {
+public class Coin{
     private String id;
     private String symbol;
     private String name;
@@ -35,9 +35,12 @@ public class Coin implements Parcelable {
     private Roi roi;
     private String last_updated;
 
+    //imagenes
     private Bitmap imageBitmap;
+    private byte[] imageBytes;
 
 
+    /*
     protected Coin(Parcel in) {
         this.id = in.readString();
         this.symbol = in.readString();
@@ -65,7 +68,9 @@ public class Coin implements Parcelable {
         this.atl_date = in.readString();
         this.roi = in.readParcelable(Roi.class.getClassLoader());
         this.last_updated = in.readString();
-    }
+        this.imageBitmap = in.readParcelable(Bitmap.class.getClassLoader());
+        this.imageBytes = in.createByteArray();
+    }*/
 
     public Coin(){}
 
@@ -285,18 +290,27 @@ public class Coin implements Parcelable {
         this.imageBitmap = imageBitmap;
     }
 
-    public static class Roi implements Parcelable {
+    public byte[] getImageBytes () {
+        return imageBytes;
+    }
+
+    public void setImageBytes (byte[] imageBytes) {
+        this.imageBytes = imageBytes;
+    }
+
+    public static class Roi{
         private double times;
         private String currency;
         private double percentage;
 
         public Roi(){}
 
+        /*
         protected Roi(Parcel in) {
             this.times = in.readDouble();
             this.currency = in.readString();
             this.percentage = in.readDouble();
-        }
+        }*/
 
         public double getTimes(){
             return times;
@@ -337,6 +351,7 @@ public class Coin implements Parcelable {
             }
         }
 
+        /*
         @Override
         public int describeContents () {
             return 0;
@@ -359,10 +374,11 @@ public class Coin implements Parcelable {
             public Roi[] newArray(int size) {
                 return new Roi[size];
             }
-        };
+        };*/
 
     }
 
+    /*
     @Override
     public int describeContents () {
         return 0;
@@ -396,6 +412,7 @@ public class Coin implements Parcelable {
         dest.writeString(this.atl_date);
         dest.writeParcelable(this.roi, i);
         dest.writeString(this.last_updated);
+        dest.writeByteArray(this.imageBytes);
     }
     public static final Parcelable.Creator<Coin> CREATOR = new Parcelable.Creator<Coin>() {
         @Override
@@ -407,7 +424,7 @@ public class Coin implements Parcelable {
         public Coin[] newArray(int size) {
             return new Coin[size];
         }
-    };
+    };*/
 
 }
 

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,18 +44,19 @@ public class CoinDB {
     }
     public void insertCoins (List<Coin> coins) throws IOException {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        if(getNumOfRecords()>0){
+            int version = db.getVersion();
+            db.setVersion(version+1);
+        }
         List<ContentValues> valuesList = new ArrayList<>();
 
         for (Coin coin : coins) {
-
-            ImageManager imageManager = ImageManager.getInstance(coin.getImage());
-            byte[] byteImage = imageManager.getBytesFromBitmap();
 
             ContentValues values = new ContentValues();
             values.put(CoinDatabaseHelper.COLUMN_ID, coin.getId());
             values.put(CoinDatabaseHelper.COLUMN_SYMBOL, coin.getSymbol());
             values.put(CoinDatabaseHelper.COLUMN_NAME, coin.getName());
-            values.put(CoinDatabaseHelper.COLUMN_IMAGE, byteImage);
+            values.put(CoinDatabaseHelper.COLUMN_IMAGE, coin.getImageBytes());
             values.put(CoinDatabaseHelper.COLUMN_CURRENT_PRICE, coin.getCurrent_price());
             values.put(CoinDatabaseHelper.COLUMN_MARKET_CAP, coin.getMarket_cap());
             values.put(CoinDatabaseHelper.COLUMN_MARKET_CAP_RANK, coin.getMarket_cap_rank());
@@ -75,8 +77,13 @@ public class CoinDB {
             values.put(CoinDatabaseHelper.COLUMN_ATL, coin.getAtl());
             values.put(CoinDatabaseHelper.COLUMN_ATL_CHANGE_PERCENTAGE, coin.getAtl_change_percentage());
             values.put(CoinDatabaseHelper.COLUMN_ATL_DATE, coin.getAtl_date());
-            values.put(CoinDatabaseHelper.COLUMN_ROI, coin.getRoi().toJson());
+            if(coin.getRoi()==null ){
+                values.put(CoinDatabaseHelper.COLUMN_ROI,"");
+            }else{
+                values.put(CoinDatabaseHelper.COLUMN_ROI, coin.getRoi().toJson());
+            }
             values.put(CoinDatabaseHelper.COLUMN_LAST_UPDATED, coin.getLast_updated());
+            values.put(CoinDatabaseHelper.COLUMN_IMAGE_BITMAP, coin.getImageBitmap().toString());
 
             valuesList.add(values);
         }
@@ -212,10 +219,17 @@ public class CoinDB {
             double currentPrice = cursor.getDouble(cursor.getColumnIndexOrThrow(CoinDatabaseHelper.COLUMN_CURRENT_PRICE));
             double marketCap = cursor.getDouble(cursor.getColumnIndexOrThrow(CoinDatabaseHelper.COLUMN_MARKET_CAP));
             int marketCapRank = cursor.getInt(cursor.getColumnIndexOrThrow(CoinDatabaseHelper.COLUMN_MARKET_CAP_RANK));
-            // Otros campos omitidos
 
             Coin coin = new Coin();
+            coin.setId(id);
+            coin.setSymbol(symbol);
+            coin.setName(name);
+            coin.setImageBytes(image);
+            coin.setCurrent_price(currentPrice);
+            coin.setMarket_cap(marketCap);
+            coin.setMarket_cap_rank(marketCapRank);
+            coins.add(coin);
         }
-        return null;
+        return coins;
     }
 }

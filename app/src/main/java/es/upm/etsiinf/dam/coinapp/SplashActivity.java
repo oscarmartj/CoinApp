@@ -1,10 +1,8 @@
 package es.upm.etsiinf.dam.coinapp;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,18 +14,16 @@ import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.os.Bundle;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import es.upm.etsiinf.dam.coinapp.AsyncTask.CoinGeckoThread;
-import es.upm.etsiinf.dam.coinapp.database.CoinDatabaseHelper;
 import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -36,7 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import es.upm.etsiinf.dam.coinapp.ui.login.LoginActivity;
-import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.TokenManager;
 
 
@@ -56,13 +51,34 @@ public class SplashActivity extends AppCompatActivity {
         ImageView logoImageView = findViewById(R.id.logo);
         TextView noInternetTW = findViewById(R.id.textview_centrado);
 
+        CoinDB coinDB = new CoinDB(this);
+
         //Si no tiene conexión a internet y no tiene datos de las monedas guardados en la base de datos
         if(!isConnected() && !hasData()){
             logoImageView.setVisibility(View.INVISIBLE);
             noInternetTW.setVisibility(View.VISIBLE);
             connectionCheck();
-        }else if(!isConnected() && hasData()){
-
+        }else if(!isConnected() && hasData()){ //Si no tiene conexión a internet pero si que tiene datos en la db para poder mostrar offline.
+            //Si esta logueado
+            if(userIsLoggedIn()){
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                //Sino esta logueado
+            }else{
+                MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.heartbeatsound);
+                logoImageView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.heartbeat));
+                mediaPlayer.start();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mediaPlayer.stop();
+                        Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }, 1500);
+            }
         }else {
 
             //comprobar si el usuario está registrado y conectado
@@ -87,9 +103,15 @@ public class SplashActivity extends AppCompatActivity {
                                 Log.i("handleMessage", "Entra en el case 0 del handler");
                                 // Almacenar los datos de las criptomonedas recibidas
                                 coins = (List<Coin>) msg.obj;
+
+                                try {
+                                    coinDB.insertCoins(coins);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
                                 // Iniciar la actividad principal
                                 Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                                DataManager.setCoinsInIntent(coins, intent);
                                 try {
                                     Thread.sleep(1500);
                                 } catch (InterruptedException e) {
@@ -110,11 +132,12 @@ public class SplashActivity extends AppCompatActivity {
                 Log.i("Main", "Antes de crear el thread");
                 Thread thread = new Thread(new CoinGeckoThread(1, handler));
                 thread.start();
+                /*
                 try {
                     thread.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         }
     }
@@ -153,7 +176,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
-
     }
 }
 
