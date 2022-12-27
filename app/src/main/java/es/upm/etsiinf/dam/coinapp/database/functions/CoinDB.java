@@ -1,5 +1,7 @@
 package es.upm.etsiinf.dam.coinapp.database.functions;
 
+import static es.upm.etsiinf.dam.coinapp.database.CoinDatabaseHelper.TABLE_NAME;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -24,6 +26,21 @@ public class CoinDB {
         dbHelper = new CoinDatabaseHelper(context);
     }
 
+    public int getNumOfRecords(){
+        int numRecords;
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            numRecords = cursor.getCount();
+        } else {
+            numRecords = 0;
+        }
+        cursor.close();
+        return numRecords;
+
+    }
     public void insertCoins (List<Coin> coins) throws IOException {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         List<ContentValues> valuesList = new ArrayList<>();
@@ -66,7 +83,7 @@ public class CoinDB {
         try {
             db.beginTransaction();
             for (int i = 0; i < valuesList.size(); i++) {
-                db.insert(CoinDatabaseHelper.TABLE_NAME, null, valuesList.get(i));
+                db.insert(TABLE_NAME, null, valuesList.get(i));
             }
             db.setTransactionSuccessful();
         } finally {
@@ -77,7 +94,7 @@ public class CoinDB {
 
     public Coin searchCoinById (String id) throws JSONException {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM " + CoinDatabaseHelper.TABLE_NAME + " WHERE " + CoinDatabaseHelper.COLUMN_ID + " = '" + id + "'";
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + CoinDatabaseHelper.COLUMN_ID + " = '" + id + "'";
         Cursor cursor = db.rawQuery(query, null);
 
         if(cursor.getCount() == 0) return null;
@@ -177,7 +194,7 @@ public class CoinDB {
         String[] selectionArgs = {String.valueOf(min), String.valueOf(max)};
 
         Cursor cursor = db.query(
-                CoinDatabaseHelper.TABLE_NAME,
+                TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,

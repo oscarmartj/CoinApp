@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
+import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,12 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Coin[] coinsArray = (Coin[]) getIntent().getParcelableArrayExtra("coins");
-        if(coinsArray.length<=0){
-
-        }else{
-            coins= Arrays.asList(coinsArray);
-        }
+        coins = DataManager.getCoinsFromIntent(getIntent());
         TextView tw = findViewById(R.id.textview_cripto);
 
         tw.setText(coins.get(0).getId());

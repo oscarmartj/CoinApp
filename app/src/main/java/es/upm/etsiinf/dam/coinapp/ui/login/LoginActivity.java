@@ -13,9 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Parcelable;
 import android.service.voice.VoiceInteractionSession;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -27,19 +29,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
+import es.upm.etsiinf.dam.coinapp.MainActivity;
 import es.upm.etsiinf.dam.coinapp.R;
+import es.upm.etsiinf.dam.coinapp.SplashActivity;
 import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
+import es.upm.etsiinf.dam.coinapp.modelos.Coin;
+import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.register.ui.login.RegisterActivity;
 import es.upm.etsiinf.dam.coinapp.ui.login.LoginViewModel;
 import es.upm.etsiinf.dam.coinapp.ui.login.LoginViewModelFactory;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityLoginBinding;
+import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.Security;
+import es.upm.etsiinf.dam.coinapp.utils.Usernames;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
+
+    private List<Coin> coins;
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -47,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        coins= DataManager.getCoinsFromIntent(getIntent());
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory(this))
                 .get(LoginViewModel.class);
@@ -103,9 +116,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                     updateUiWithUser(loginResult.getSuccess());
-                    setResult(Activity.RESULT_OK);
-                    //Complete and destroy login activity once successful
-                    finish();
                 }
             }
         });
@@ -154,25 +164,25 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick (View view) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivityForResult(intent,Activity.RESULT_OK);
+                startActivity(intent);
 
             }
         });
     }
 
-    @Override
-    protected void onActivityResult (int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==Activity.RESULT_OK && resultCode== Activity.RESULT_OK){
-            Toast.makeText(getApplicationContext(), getString(R.string.iniciar_sesion_tras_registro), Toast.LENGTH_LONG).show();
-        }
-    }
-
     private void updateUiWithUser (LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
+
+        //formación de mensaje
+        User user = new UserDatabaseHelper(this).getUserByEmail(model.getDisplayName());
+        String usuario = Usernames.firstToUppercase(user.getUsername());
+        String welcome = getResources().getString(R.string.welcome, usuario);
+
+        //preparar el intent
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        DataManager.setCoinsInIntent(this.coins,intent);
+        startActivity(intent);
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        finish();
     }
 
     private void showLoginFailed (@StringRes Integer errorString) {

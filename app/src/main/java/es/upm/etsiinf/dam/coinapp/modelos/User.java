@@ -1,4 +1,4 @@
-package es.upm.etsiinf.dam.coinapp.data.model;
+package es.upm.etsiinf.dam.coinapp.modelos;
 
 public class User {
     private String username;

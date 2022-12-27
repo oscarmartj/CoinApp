@@ -7,10 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import es.upm.etsiinf.dam.coinapp.data.model.User;
+import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.utils.Security;
 
 public class UserDatabaseHelper extends SQLiteOpenHelper {
@@ -37,7 +36,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_EMAIL + " TEXT UNIQUE" + ")";
 
 
-    private Security security = new Security();
+    private final Security security = new Security();
 
     public UserDatabaseHelper (Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,7 +55,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insertUser (String username, String password, String email) throws NoSuchAlgorithmException {
+    public boolean insertUser (String username, String password, String email) throws NoSuchAlgorithmException {
         // Obtiene la base de datos en modo escritura
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -72,10 +71,10 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_EMAIL, email);
 
         // Inserta un nuevo registro en la tabla
-        db.insert(TABLE_NAME_USERS, null, values);
-
-        // Cierra la base de datos
+        long rowId = db.insert(TABLE_NAME_USERS, null, values);
+        Log.i("RegisterActivity", "rowId="+rowId);
         db.close();
+        return rowId != -1;
     }
 
     public User getUserByEmail(String email) {

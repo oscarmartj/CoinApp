@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import es.upm.etsiinf.dam.coinapp.data.model.LoggedInUser;
-import es.upm.etsiinf.dam.coinapp.data.model.User;
+import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
 import es.upm.etsiinf.dam.coinapp.utils.Security;
 

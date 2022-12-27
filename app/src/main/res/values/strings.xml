@@ -5,8 +5,10 @@
     <string name="prompt_password">Contraseña</string>
     <string name="action_sign_in">Iniciar sesión</string>
     <string name="action_sign_in_short">Iniciar sesión</string>
-    <string name="welcome">"Welcome !"</string>
+    <string name="welcome">"¡Bienvenido %s!"</string>
     <string name="invalid_username">Correo electrónico no válido</string>
+    <string name="invalid_username_2">Usuario no válido</string>
+    <string name="invalid_email">Correo electrónico no válido</string>
     <string name="invalid_password">La contraseña debe tener >5 caracteres</string>
     <string name="login_failed">"Inicio de sesión fallido"</string>
     <string name="recordar_inicio_de_sesi_n">Recordar inicio de sesión</string>
@@ -16,4 +18,6 @@
     <string name="prompt_username">Nombre de usuario</string>
     <string name="action_register">Finalizar registro</string>
     <string name="action_register_short">Finalizar registro</string>
+    <string name="register_failed">"Registro fallido"</string>
+    <string name="no_internet_connection">No hay conexión a internet.\n Por favor active internet para\n descargar los datos.</string>
 </resources>
