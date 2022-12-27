@@ -7,10 +7,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import es.upm.etsiinf.dam.coinapp.utils.DataManager;
+
 public class CoinDatabaseHelper extends SQLiteOpenHelper {
+
+    private Context mContext;
     private static final String DATABASE_NAME = "CoinDatabase";
 
-    private static int DATABASE_VERSION = 1;
+    private int DATABASE_VERSION = 1;
 
     public static final String TABLE_NAME = "coins";
 
@@ -74,7 +78,8 @@ public class CoinDatabaseHelper extends SQLiteOpenHelper {
 
 
     public CoinDatabaseHelper(Context context){
-        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+        super(context,DATABASE_NAME,null, DataManager.getSavedDatabaseVersion(context));
+        this.mContext = context;
     }
     @Override
     public void onCreate (SQLiteDatabase db) {
@@ -89,17 +94,10 @@ public class CoinDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void saveDatabaseVersion(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("database_version", DATABASE_VERSION);
-        editor.apply();
+
+
+    public void setDATABASE_VERSION (int DATABASE_VERSION) {
+        this.DATABASE_VERSION = DATABASE_VERSION;
+        DataManager.saveDatabaseVersion(DATABASE_VERSION,mContext);
     }
-
-    public int getSavedDatabaseVersion(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getInt("database_version", DATABASE_VERSION);
-    }
-
-
 }
