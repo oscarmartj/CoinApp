@@ -43,12 +43,8 @@ public class CoinDB {
 
     }
     public void insertCoins (List<Coin> coins) throws IOException {
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        /*
-        if(getNumOfRecords()>0){
-            int version = db.getVersion();
-            db.setVersion(version+1);
-        }*/
         List<ContentValues> valuesList = new ArrayList<>();
 
         for (Coin coin : coins) {
@@ -233,4 +229,11 @@ public class CoinDB {
         }
         return coins;
     }
+
+    public void deleteAllCoins() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(TABLE_NAME, null, null);
+        db.close();
+    }
+
 }

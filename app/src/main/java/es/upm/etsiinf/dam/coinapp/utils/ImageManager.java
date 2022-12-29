@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +35,11 @@ public class ImageManager {
     }
 
     public Bitmap getBitmapFromBLOB(byte[] image){
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
+        Log.wtf("bitmapblob","aqui");
+        InputStream inputStream = new ByteArrayInputStream(image);
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+        return bitmap;
+
     }
 
 }

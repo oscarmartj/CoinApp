@@ -100,4 +100,8 @@ public class CoinDatabaseHelper extends SQLiteOpenHelper {
         this.DATABASE_VERSION = DATABASE_VERSION;
         DataManager.saveDatabaseVersion(DATABASE_VERSION,mContext);
     }
+
+    public int getDATABASE_VERSION () {
+        return DATABASE_VERSION;
+    }
 }

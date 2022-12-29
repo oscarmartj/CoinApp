@@ -53,11 +53,17 @@ public class SplashActivity extends AppCompatActivity {
 
         CoinDB coinDB = new CoinDB(this);
 
+        //Si tiene conexión, elimina todas las filas para actualizar la base de datos
+        //Si no tiene conexión, no eliminara las filas de la base de datos y se mostraron datos que teniamos desde la última conexión
+        if(isConnected()){
+            coinDB.deleteAllCoins();
+        }
+
         //Si no tiene conexión a internet y no tiene datos de las monedas guardados en la base de datos
         if(!isConnected() && !hasData()){
             logoImageView.setVisibility(View.INVISIBLE);
             noInternetTW.setVisibility(View.VISIBLE);
-            connectionCheck();
+            connectionCheck(); //espera hasta que tenga conexión
         }else if(!isConnected() && hasData()){ //Si no tiene conexión a internet pero si que tiene datos en la db para poder mostrar offline.
             //Si esta logueado
             if(userIsLoggedIn()){
