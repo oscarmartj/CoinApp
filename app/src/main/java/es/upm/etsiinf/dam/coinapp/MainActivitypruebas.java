@@ -13,18 +13,19 @@ import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivitypruebas extends AppCompatActivity {
 
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_pruebas);
 
         TextView tw = findViewById(R.id.textview_cripto);
         ImageView iw = findViewById(R.id.imageView);
         ImageView iw2 = findViewById(R.id.imageView2);
         ImageView iw3 = findViewById(R.id.imageView3);
+
 
         CoinDB db = new CoinDB(this);
         List<Coin> coins = db.getCoinsMarketCapRange(1,3);

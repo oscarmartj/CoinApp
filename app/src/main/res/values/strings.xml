@@ -20,4 +20,8 @@
     <string name="action_register_short">Finalizar registro</string>
     <string name="register_failed">"Registro fallido"</string>
     <string name="no_internet_connection">No hay conexión a internet.\n Por favor active internet para\n descargar los datos.</string>
+
+    <string name="title_ranking">Ranking</string>
+    <string name="title_magic">Magic</string>
+    <string name="title_profile">Profile</string>
 </resources>

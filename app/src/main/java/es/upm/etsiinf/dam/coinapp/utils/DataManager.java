@@ -16,5 +16,7 @@ public class DataManager {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getInt("DATABASE_VERSION", 1);
     }
+
+
 }
 

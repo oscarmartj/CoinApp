@@ -19,6 +19,7 @@ import java.util.List;
 
 import es.upm.etsiinf.dam.coinapp.AsyncTask.CoinGeckoThread;
 import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
+import es.upm.etsiinf.dam.coinapp.main.MainActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 import android.os.Handler;
@@ -67,7 +68,7 @@ public class SplashActivity extends AppCompatActivity {
         }else if(!isConnected() && hasData()){ //Si no tiene conexión a internet pero si que tiene datos en la db para poder mostrar offline.
             //Si esta logueado
             if(userIsLoggedIn()){
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent intent = new Intent(SplashActivity.this, MainActivitypruebas.class);
                 startActivity(intent);
                 finish();
                 //Sino esta logueado
@@ -87,13 +88,13 @@ public class SplashActivity extends AppCompatActivity {
             }
         }else {
 
-            //comprobar si el usuario está registrado y conectado
+            //comprobar si el usuario está registrado y logueado
             if(userIsLoggedIn()) {
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             } else {
-                // Si el usuario esta registrado y no conectado, iniciar la pantalla de inicio de sesión despues de la splash
+                // Si el usuario esta registrado y no logueado, iniciar la pantalla de inicio de sesión despues de la splash
 
 
                 MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.heartbeatsound);

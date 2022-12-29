@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_ranking">
+
+    <fragment
+        android:id="@+id/navigation_ranking"
+        android:name="es.upm.etsiinf.dam.coinapp.main.ui.ranking.RankingFragment"
+        android:label="@string/title_ranking"
+        tools:layout="@layout/fragment_ranking" >
+        <action
+            android:id="@+id/action_navigation_ranking_to_navigation_magic"
+            app:destination="@id/navigation_magic" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_magic"
+        android:name="es.upm.etsiinf.dam.coinapp.main.ui.magic.MagicFragment"
+        android:label="@string/title_magic"
+        tools:layout="@layout/fragment_magic" >
+        <action
+            android:id="@+id/action_navigation_magic_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="es.upm.etsiinf.dam.coinapp.main.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_navigation_ranking"
+            app:destination="@id/navigation_ranking" />
+    </fragment>
+</navigation>

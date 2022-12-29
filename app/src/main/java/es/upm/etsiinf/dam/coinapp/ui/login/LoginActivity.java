@@ -25,9 +25,10 @@ import android.widget.Toast;
 
 import java.security.NoSuchAlgorithmException;
 
-import es.upm.etsiinf.dam.coinapp.MainActivity;
+import es.upm.etsiinf.dam.coinapp.MainActivitypruebas;
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
+import es.upm.etsiinf.dam.coinapp.main.MainActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.register.ui.login.RegisterActivity;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityLoginBinding;
