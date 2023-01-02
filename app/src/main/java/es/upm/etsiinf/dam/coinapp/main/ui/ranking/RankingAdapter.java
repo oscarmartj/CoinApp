@@ -1,0 +1,70 @@
+package es.upm.etsiinf.dam.coinapp.main.ui.ranking;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+import es.upm.etsiinf.dam.coinapp.R;
+import es.upm.etsiinf.dam.coinapp.modelos.Coin;
+import es.upm.etsiinf.dam.coinapp.utils.DataManager;
+
+public class RankingAdapter extends BaseAdapter {
+
+    List<Coin> coins = new LinkedList<>();
+    @Override
+    public int getCount () {
+        return coins.size();
+    }
+
+    @Override
+    public Object getItem (int i) {
+        return coins.get(i);
+    }
+
+    @Override
+    public long getItemId (int i) {
+        return coins.get(i).getMarket_cap_rank();
+    }
+
+    @Override
+    public View getView (int i, View view, ViewGroup viewGroup) {
+        LayoutInflater inflater = (LayoutInflater) viewGroup
+                .getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        Coin coin = coins.get(i);
+
+        if(view == null){
+            view = inflater.inflate(R.layout.item_ranking, viewGroup, false);
+        }
+
+        ImageView imageView = view.findViewById(R.id.imageView_coin);
+        TextView textViewName = view.findViewById(R.id.textViewName_coin);
+        TextView textViewPrice = view.findViewById(R.id.textViewPrice_coin);
+        TextView textViewPercentage = view.findViewById(R.id.textViewPercentage_coin);
+        ImageView imageViewArrow = view.findViewById(R.id.imageViewArrow_coin);
+
+        imageView.setImageBitmap(coin.getImageBitmap());
+        textViewName.setText(coin.getName());
+        textViewPrice.setText(String.format(Locale.US,"%,.2f",coin.getCurrent_price()));
+
+        double percentage = coin.getMarket_cap_change_percentage_24h();
+        textViewPercentage.setText(String.format("%s%%", DataManager.roundNumber(percentage)));
+        if(percentage>0.0){
+            imageViewArrow.setImageResource(R.drawable.ic_arrowup_green_24dp);
+        }else if(percentage<0.0){
+            imageViewArrow.setImageResource(R.drawable.ic_arrowdown_red_24dp);
+        }else{
+            imageViewArrow.setImageResource(R.drawable.ic_arrowright_grey_24dp);
+        }
+        return view;
+    }
+}

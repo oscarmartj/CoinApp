@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel;
 public class RankingViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
+    private int page = 1;
+    private boolean isLoading = false;
 
     public RankingViewModel () {
         mText = new MutableLiveData<>();

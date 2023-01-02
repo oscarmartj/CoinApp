@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,8 +26,9 @@ public class RankingFragment extends Fragment {
         binding = FragmentRankingBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        rankingViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        ListView listviewCoins = binding.listviewCoins;
+        //rankingViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        //ListAdapter adapter = new ListAdapter(getContext(),rankingViewModel.get)
         return root;
     }
 
