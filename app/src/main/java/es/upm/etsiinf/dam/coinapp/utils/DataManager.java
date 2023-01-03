@@ -29,5 +29,21 @@ public class DataManager {
         }
         return result;
     }
+    public static double roundNumberWithSign(double num) {
+        BigDecimal bd = new BigDecimal(num);
+        bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
+        return bd.doubleValue();
+    }
+
+    public static int whatPage(int records){
+        return records/20;
+    }
+
+    public static int getInitialRange(int x) {
+        if (x == 1) {
+            return 1;
+        }
+        return (x-1) * 20;
+    }
 }
 

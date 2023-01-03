@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,14 +28,20 @@ import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 public class CoinGeckoThread implements Runnable {
 
-    private static final String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=20&";
+    private String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=20&";
     private int page;
     private Handler handler;
     private int maxPages = 50;
+    private List<Coin> coins = new LinkedList<>();
 
     public CoinGeckoThread (int page, Handler handler) {
         this.page = page;
         this.handler = handler;
+    }
+
+    public CoinGeckoThread(List<Coin> coins, Handler handler){
+        this.coins=coins;
+        this.handler= handler;
     }
 
     @Override
@@ -42,7 +49,10 @@ public class CoinGeckoThread implements Runnable {
         try {
             if(page<=maxPages){
                 Log.i("Thread","If del run");
-                URL url = new URL(API_URL + "page=" + page);
+                URL url = coins.size()>0?
+                        new URL("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page="+coins.size()+"&page=1")
+                        :
+                        new URL(API_URL + "page=" + page);
                 Log.i("PageThread",url.toString());
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");

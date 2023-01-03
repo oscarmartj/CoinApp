@@ -433,6 +433,7 @@ public class Coin{
         return "Coin{" +
                 "s='" + symbol + '\'' +
                 ", n=" + market_cap_rank +
+                ", p=" + current_price +
                 '}';
     }
 
