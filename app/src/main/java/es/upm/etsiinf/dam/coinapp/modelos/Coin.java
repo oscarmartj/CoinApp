@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class Coin{
     private String id;
     private String symbol;
@@ -426,6 +428,26 @@ public class Coin{
         }
     };*/
 
+    @Override
+    public String toString () {
+        return "Coin{" +
+                "s='" + symbol + '\'' +
+                ", n=" + market_cap_rank +
+                '}';
+    }
+
+    @Override
+    public boolean equals (Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Coin coin = (Coin) o;
+        return name.equals(coin.name);
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hash(name);
+    }
 }
 
 

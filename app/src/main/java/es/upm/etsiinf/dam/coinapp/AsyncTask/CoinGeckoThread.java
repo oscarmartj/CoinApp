@@ -27,10 +27,10 @@ import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 public class CoinGeckoThread implements Runnable {
 
-    private static final String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=10&";
+    private static final String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=20&";
     private int page;
     private Handler handler;
-    private int maxPages = 20;
+    private int maxPages = 50;
 
     public CoinGeckoThread (int page, Handler handler) {
         this.page = page;
@@ -42,7 +42,8 @@ public class CoinGeckoThread implements Runnable {
         try {
             if(page<=maxPages){
                 Log.i("Thread","If del run");
-                URL url = new URL(API_URL + "?page=" + page);
+                URL url = new URL(API_URL + "page=" + page);
+                Log.i("PageThread",url.toString());
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.connect();

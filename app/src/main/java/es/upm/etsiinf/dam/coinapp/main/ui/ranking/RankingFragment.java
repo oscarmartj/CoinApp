@@ -4,9 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
+import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,6 +16,7 @@ import es.upm.etsiinf.dam.coinapp.databinding.FragmentRankingBinding;
 public class RankingFragment extends Fragment {
 
     private FragmentRankingBinding binding;
+    private RankingAdapter rankingAdapter;
 
     public View onCreateView (@NonNull LayoutInflater inflater,
                               ViewGroup container, Bundle savedInstanceState) {
@@ -27,8 +27,30 @@ public class RankingFragment extends Fragment {
         View root = binding.getRoot();
 
         ListView listviewCoins = binding.listviewCoins;
-        //rankingViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        //ListAdapter adapter = new ListAdapter(getContext(),rankingViewModel.get)
+        rankingAdapter = new RankingAdapter();
+        listviewCoins.setAdapter(rankingAdapter);
+
+        //Añadir el caracter "Infinite Scrolling"
+        listviewCoins.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged (AbsListView absListView, int i) {
+
+            }
+
+            @Override
+            public void onScroll (AbsListView absListView, int i, int i1, int i2) {
+                if(i+i1 == i2 && i2 !=0){
+                    if(!rankingViewModel.isLoading()){
+                        rankingViewModel.loadMoreCoins();
+                    }
+                }
+            }
+        });
+        rankingViewModel.getCoins().observe(getViewLifecycleOwner(), coins -> {
+            rankingAdapter.clearCoins();
+            rankingAdapter.setCoins(coins);
+        });
+
         return root;
     }
 

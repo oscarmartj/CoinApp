@@ -53,18 +53,32 @@ public class RankingAdapter extends BaseAdapter {
         ImageView imageViewArrow = view.findViewById(R.id.imageViewArrow_coin);
 
         imageView.setImageBitmap(coin.getImageBitmap());
-        textViewName.setText(coin.getName());
-        textViewPrice.setText(String.format(Locale.US,"%,.2f",coin.getCurrent_price()));
+        textViewName.setText(coin.getSymbol());
+        textViewPrice.setText(coin.getMarket_cap_rank()+"");
+        //textViewPrice.setText(String.format(Locale.US,"%,.2f",coin.getCurrent_price()));
 
         double percentage = coin.getMarket_cap_change_percentage_24h();
-        textViewPercentage.setText(String.format("%s%%", DataManager.roundNumber(percentage)));
-        if(percentage>0.0){
+
+        if(!Double.isNaN(percentage) && percentage>0.0){
+            textViewPercentage.setText(String.format("%s%%", DataManager.roundNumber(percentage)));
             imageViewArrow.setImageResource(R.drawable.ic_arrowup_green_24dp);
-        }else if(percentage<0.0){
+        }else if(!Double.isNaN(percentage) && percentage<0.0){
+            textViewPercentage.setText(String.format("%s%%", DataManager.roundNumber(percentage)));
             imageViewArrow.setImageResource(R.drawable.ic_arrowdown_red_24dp);
         }else{
+            textViewPercentage.setText(String.format("%s%%", DataManager.roundNumber(0.0)));
             imageViewArrow.setImageResource(R.drawable.ic_arrowright_grey_24dp);
         }
         return view;
+    }
+
+    public void setCoins(List<Coin> coinsList){
+        this.coins.addAll(coinsList);
+        super.notifyDataSetChanged();
+    }
+
+    public void clearCoins(){
+        this.coins.clear();
+        super.notifyDataSetChanged();
     }
 }
