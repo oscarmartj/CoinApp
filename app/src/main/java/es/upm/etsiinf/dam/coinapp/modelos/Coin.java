@@ -42,39 +42,8 @@ public class Coin{
     private byte[] imageBytes;
 
 
-    /*
-    protected Coin(Parcel in) {
-        this.id = in.readString();
-        this.symbol = in.readString();
-        this.name = in.readString();
-        this.image = in.readString();
-        this.current_price = in.readDouble();
-        this.market_cap = in.readDouble();
-        this.market_cap_rank = in.readInt();
-        this.fully_diluted_valuation = in.readDouble();
-        this.total_volume = in.readDouble();
-        this.high_24h = in.readDouble();
-        this.low_24h = in.readDouble();
-        this.price_change_24h = in.readDouble();
-        this.price_change_percentage_24h = in.readDouble();
-        this.market_cap_change_24h = in.readDouble();
-        this.market_cap_change_percentage_24h = in.readDouble();
-        this.circulating_supply = in.readDouble();
-        this.total_supply = in.readDouble();
-        this.max_supply = in.readDouble();
-        this.ath = in.readDouble();
-        this.ath_change_percentage = in.readDouble();
-        this.ath_date = in.readString();
-        this.atl = in.readDouble();
-        this.atl_change_percentage = in.readDouble();
-        this.atl_date = in.readString();
-        this.roi = in.readParcelable(Roi.class.getClassLoader());
-        this.last_updated = in.readString();
-        this.imageBitmap = in.readParcelable(Bitmap.class.getClassLoader());
-        this.imageBytes = in.createByteArray();
-    }*/
-
     public Coin(){}
+
 
     public String getId () {
         return id;

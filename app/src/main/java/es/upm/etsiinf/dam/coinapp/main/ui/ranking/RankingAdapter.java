@@ -1,6 +1,8 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.ranking;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import java.util.Locale;
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
+import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 public class RankingAdapter extends BaseAdapter {
 
@@ -54,11 +57,16 @@ public class RankingAdapter extends BaseAdapter {
         ImageView imageViewArrow = view.findViewById(R.id.imageViewArrow_coin);
 
         textViewMarketCapRank.setText(coin.getMarket_cap_rank()+"");
-        imageView.setImageBitmap(coin.getImageBitmap());
+
+        if(isConnected(view.getContext())){
+            imageView.setImageBitmap(coin.getImageBitmap());
+        }else{
+            imageView.setImageBitmap(new ImageManager().getBitmapFromBLOB(coin.getImageBytes()));
+        }
         textViewName.setText(coin.getSymbol());
         textViewPrice.setText("$"+String.format(Locale.US,"%,.2f",coin.getCurrent_price()));
 
-        double percentage = coin.getMarket_cap_change_percentage_24h();
+        double percentage = coin.getPrice_change_percentage_24h();
 
         if(!Double.isNaN(percentage)){
             String percentageString = DataManager.roundNumber(percentage);
@@ -88,5 +96,11 @@ public class RankingAdapter extends BaseAdapter {
     public void clearCoins(){
         this.coins.clear();
         super.notifyDataSetChanged();
+    }
+
+    private boolean isConnected(Context context){
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

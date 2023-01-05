@@ -139,12 +139,6 @@ public class SplashActivity extends AppCompatActivity {
                 Log.i("Main", "Antes de crear el thread");
                 Thread thread = new Thread(new CoinGeckoThread(1, handler));
                 thread.start();
-                /*
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
             }
         }
     }

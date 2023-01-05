@@ -1,8 +1,8 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.ranking;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,7 +19,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import es.upm.etsiinf.dam.coinapp.databinding.FragmentRankingBinding;
-
+import es.upm.etsiinf.dam.coinapp.main.ui.ranking.singleextended.DetailActivity;
+import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 
 public class RankingFragment extends Fragment {
@@ -29,13 +31,12 @@ public class RankingFragment extends Fragment {
 
     public View onCreateView (@NonNull LayoutInflater inflater,
                               ViewGroup container, Bundle savedInstanceState) {
+        context = requireActivity();
         RankingViewModel rankingViewModel =
-                new ViewModelProvider(this).get(RankingViewModel.class);
+                new ViewModelProvider(this, new RankingViewModelFactory(context)).get(RankingViewModel.class);
 
         binding = FragmentRankingBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        context = requireActivity();
-        rankingViewModel.setConnected(isConnected());
 
         ProgressBar progressBar = binding.progressBarCoins;
         ListView listviewCoins = binding.listviewCoins;
@@ -53,12 +54,21 @@ public class RankingFragment extends Fragment {
             public void onScroll (AbsListView absListView, int i, int i1, int i2) {
                 if(i+i1 == i2 && i2 !=0){
                     if(!rankingViewModel.isLoading()){
-                        rankingViewModel.loadMoreCoins(context,isConnected());
+                        rankingViewModel.loadMoreCoins();
                     }else{
                         progressBar.setVisibility(View.VISIBLE);
                     }
                 }
             }
+        });
+
+        listviewCoins.setOnItemClickListener((adapterView, view, i, l) -> {
+            Coin selectedCoin = (Coin) ((RankingAdapter)(listviewCoins.getAdapter())).getItem(i);
+            Intent intent = new Intent(requireActivity(), DetailActivity.class);
+            intent.putExtra("coin_id",selectedCoin.getId());
+            startActivity(intent);
+
+
         });
         rankingViewModel.getCoins().observe(getViewLifecycleOwner(), coins -> {
             rankingAdapter.clearCoins();
@@ -75,6 +85,13 @@ public class RankingFragment extends Fragment {
             swipeRefreshLayout.setRefreshing(isRefreshing);
         });
 
+        rankingViewModel.getInternet().observe(getViewLifecycleOwner(), isInternet -> {
+            if(isInternet.equalsIgnoreCase("NO")){
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(context, "No hay conexión a internet para actualizar los datos", Toast.LENGTH_LONG).show();
+            }
+        });
+
         return root;
     }
 
@@ -82,12 +99,5 @@ public class RankingFragment extends Fragment {
     public void onDestroyView () {
         super.onDestroyView();
         binding = null;
-    }
-
-    private boolean isConnected(){
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        return isConnected;
     }
 }

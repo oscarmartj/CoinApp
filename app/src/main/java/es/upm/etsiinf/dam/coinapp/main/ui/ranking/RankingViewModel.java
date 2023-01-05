@@ -1,6 +1,8 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.ranking;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -10,6 +12,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,12 +29,23 @@ public class RankingViewModel extends ViewModel {
     private boolean isLoading = false;
     private Handler handler;
     private Handler handlerRefreshing;
+    private final Context context;
+    private MutableLiveData<String> noInternet;
+    private CoinDB coinDB;
 
-    public RankingViewModel () {
+    public RankingViewModel (Context context) {
+        this.context=context;
+        coinDB = new CoinDB(context);
         coins = new MutableLiveData<>();
         coins.setValue(new LinkedList<>());
         isRefreshing = new MutableLiveData<>();
         isRefreshing.setValue(false);
+        noInternet = new MutableLiveData<>();
+        if(isConnected()) {
+            noInternet.setValue("OK");
+        } else {
+            noInternet.setValue("NO");
+        }
         loadMoreCoins();
     }
 
@@ -41,8 +55,15 @@ public class RankingViewModel extends ViewModel {
     public LiveData<Boolean> getIsRefreshing() {
         return isRefreshing;
     }
+    public LiveData<String> getInternet(){
+        return noInternet;
+    }
 
-    public void loadMoreCoins (Context context, boolean connected) {
+    public void loadMoreCoins(){
+        loadMoreCoins(isConnected());
+    }
+
+    public void loadMoreCoins (boolean connected) {
         if(isLoading) {
             return;
         } else {
@@ -53,6 +74,12 @@ public class RankingViewModel extends ViewModel {
                         case 0: //OK
                             List<Coin> newCoins = (List<Coin>)msg.obj;
                             if(newCoins != null){
+                                Log.i("newCoins",newCoins.toString());
+                                try {
+                                    coinDB.insertCoins(newCoins);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                                 List<Coin> currentCoins = coins.getValue();
                                 if(currentCoins == null){
                                     currentCoins = new LinkedList<>();
@@ -83,7 +110,11 @@ public class RankingViewModel extends ViewModel {
             }
         }
     }
+
     public void refreshCoins(){
+        refreshCoins(isConnected());
+    }
+    public void refreshCoins(boolean isConnected){
         isRefreshing.setValue(true);
 
         this.handlerRefreshing = new Handler(Looper.getMainLooper()) {
@@ -97,20 +128,31 @@ public class RankingViewModel extends ViewModel {
                         isRefreshing.postValue(false);
                         break;
                     case 1: //ERROR
-                        isRefreshing.setValue(false);
+                        isRefreshing.postValue(false);
+                        /*
+                        if(!msg.obj.toString().isEmpty() && msg.obj.toString().equalsIgnoreCase("Error")){
+                            noInternet.postValue("NO");
+                            isRefreshing.setValue(false);
+                        }*/
                         break;
                 }
             }
         };
-        new Thread(new CoinGeckoThread(this.coins.getValue(),handlerRefreshing)).start();
+
+        if(isConnected){
+            new Thread(new CoinGeckoThread(this.coins.getValue(),handlerRefreshing)).start();
+        }else{
+            handler.sendMessage(handler.obtainMessage(1, "Error"));
+        }
 
     }
     public boolean isLoading () {
         return isLoading;
     }
 
-    public void setConnected (boolean connected) {
-        this.isConnected = connected;
+    private boolean isConnected(){
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
-
 }

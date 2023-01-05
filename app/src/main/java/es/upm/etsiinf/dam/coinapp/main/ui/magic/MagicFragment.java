@@ -1,5 +1,6 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.magic;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,9 @@ public class MagicFragment extends Fragment {
 
     public View onCreateView (@NonNull LayoutInflater inflater,
                               ViewGroup container, Bundle savedInstanceState) {
+        Context context = requireActivity();
         MagicViewModel magicViewModel =
-                new ViewModelProvider(this).get(MagicViewModel.class);
+                new ViewModelProvider(this, new MagicViewModelFactory(context)).get(MagicViewModel.class);
 
         binding = FragmentMagicBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
