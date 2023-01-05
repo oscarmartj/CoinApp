@@ -29,7 +29,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/Theme.CoinApp.PopupOverlay" />
+                app:popupTheme="@style/Theme.CoinApp.PopupOverlay">
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    app:layout_collapseMode="pin">
+                    <ImageButton
+                        android:id="@+id/share_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:paddingEnd="16dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:onClick="onShareButtonClick"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_share_black_24dp"
+                        style="@style/Widget.AppCompat.Button.Colored" />
+                </FrameLayout>
+            </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
