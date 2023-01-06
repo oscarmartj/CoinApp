@@ -42,10 +42,10 @@
                         android:layout_gravity="end"
                         android:paddingEnd="16dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:onClick="onShareButtonClick"
                         android:adjustViewBounds="true"
                         android:src="@drawable/ic_share_black_24dp"
-                        style="@style/Widget.AppCompat.Button.Colored" />
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        tools:ignore="RtlSymmetry" />
                 </FrameLayout>
             </androidx.appcompat.widget.Toolbar>
 

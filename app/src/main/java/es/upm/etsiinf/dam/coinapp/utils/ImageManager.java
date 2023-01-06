@@ -46,33 +46,6 @@ public class ImageManager {
 
     }
 
-    /*public String getDominantColor (Bitmap bitmap) {
-
-        HashMap<Integer, Integer> colorMap = new HashMap<>();
-        for (int x = 0; x < bitmap.getWidth(); x++) {
-            for (int y = 0; y < bitmap.getHeight(); y++) {
-                int color = bitmap.getPixel(x, y);
-
-                int count = 1;
-                if(colorMap.containsKey(color)) {
-                    count = colorMap.get(color) + 1;
-                }
-                colorMap.put(color, count);
-            }
-        }
-
-        int dominantColor = 0;
-        int maxCount = 0;
-        for (Map.Entry<Integer, Integer> entry : colorMap.entrySet()) {
-            if(entry.getValue() > maxCount) {
-                dominantColor = entry.getKey();
-                maxCount = entry.getValue();
-            }
-        }
-
-        return String.format("#%06X", (0xFFFFFF & dominantColor));
-    }*/
-
     public String getDominantColor2 (Bitmap bitmap) {
         HashMap<Integer, Integer> colorMap = new HashMap<>();
         for (int x = 0; x < bitmap.getWidth(); x++) {
