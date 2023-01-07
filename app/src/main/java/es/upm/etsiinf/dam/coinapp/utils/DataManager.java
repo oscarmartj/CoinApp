@@ -6,10 +6,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.icu.math.BigDecimal;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import org.json.JSONException;
 
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 public class DataManager {
@@ -89,6 +97,29 @@ public class DataManager {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(coinId);
         editor.apply();
+    }
+
+    public static List<Coin> getFavorites(Context context) throws JSONException {
+        List<Coin> resultado = new LinkedList<>();
+        CoinDB coinDB = new CoinDB(context);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("favorites", MODE_PRIVATE);
+
+        Map<String, ?> allEntries = sharedPreferences.getAll();
+        List<String> trueCurrencies = new ArrayList<>();
+
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof Boolean && (Boolean) value) {
+                trueCurrencies.add(entry.getKey());
+            }
+        }
+        Log.i("CoinsT",trueCurrencies.toString());
+        for(String id : trueCurrencies){ //TODO
+            Coin coin = coinDB.searchCoinById(id);
+            if(coin!=null) resultado.add(coin);
+        }
+
+        return resultado;
     }
 }
 

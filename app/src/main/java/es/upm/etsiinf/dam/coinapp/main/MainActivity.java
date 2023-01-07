@@ -7,6 +7,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -16,9 +17,17 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import org.json.JSONException;
+
+import java.util.List;
+
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.SplashActivity;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityMainBinding;
+import es.upm.etsiinf.dam.coinapp.modelos.Coin;
+import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationScheduleJob;
+import es.upm.etsiinf.dam.coinapp.utils.DataManager;
+import es.upm.etsiinf.dam.coinapp.utils.NotificationUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        NotificationUtils nutils = new NotificationUtils();
+        nutils.createNotificationChannel(this); //crear canal de notificaciones
+
+        NotificationScheduleJob job = new NotificationScheduleJob();
+        job.scheduleJob(this);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -41,25 +56,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-
     }
-
-    /*
-    private void connectionCheck(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-                .build();
-
-        ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
-            @Override
-            public void onAvailable(Network network) {
-                Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        };
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
-    }*/
 
 }
