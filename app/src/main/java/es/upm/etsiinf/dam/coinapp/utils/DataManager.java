@@ -8,8 +8,11 @@ import android.icu.math.BigDecimal;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -99,10 +102,7 @@ public class DataManager {
         editor.apply();
     }
 
-    public static List<Coin> getFavorites(Context context) throws JSONException {
-        List<Coin> resultado = new LinkedList<>();
-        CoinDB coinDB = new CoinDB(context);
-        SharedPreferences sharedPreferences = context.getSharedPreferences("favorites", MODE_PRIVATE);
+    public static List<String> getFavorites(SharedPreferences sharedPreferences) {
 
         Map<String, ?> allEntries = sharedPreferences.getAll();
         List<String> trueCurrencies = new ArrayList<>();
@@ -113,13 +113,88 @@ public class DataManager {
                 trueCurrencies.add(entry.getKey());
             }
         }
-        Log.i("CoinsT",trueCurrencies.toString());
-        for(String id : trueCurrencies){ //TODO
-            Coin coin = coinDB.searchCoinById(id);
-            if(coin!=null) resultado.add(coin);
-        }
+        return trueCurrencies;
+    }
 
-        return resultado;
+    public static List<Coin> setCoins(JSONArray coinsJson) throws JSONException, IOException {
+        List<Coin> coins = new LinkedList<>();
+        // Recorre la lista de criptomonedas en el objeto JSON y crea objetos Coin para cada una de ellas
+        for (int i = 0; i < coinsJson.length(); i++) {
+            JSONObject coinJson = coinsJson.getJSONObject(i);
+            String id = coinJson.optString("id");
+            String name = coinJson.optString("name");
+            String symbol = coinJson.optString("symbol");
+            String image = coinJson.optString("image");
+            double current_price = coinJson.optDouble("current_price");
+            double market_cap = coinJson.optDouble("market_cap");
+            int market_cap_rank = coinJson.optInt("market_cap_rank");
+            double fully_diluted_valuation = coinJson.optDouble("fully_diluted_valuation");
+            double total_volume = coinJson.optDouble("total_volume");
+            double high_24h = coinJson.optDouble("high_24h");
+            double low_24h = coinJson.optDouble("low_24h");
+            double price_change_24h = coinJson.optDouble("price_change_24h");
+            double price_change_percentage_24h = coinJson.optDouble("price_change_percentage_24h");
+            double market_cap_change_24h = coinJson.optDouble("market_cap_change_24h");
+            double market_cap_change_percentage_24h = coinJson.optDouble("market_cap_change_percentage_24h");
+            double circulating_supply = coinJson.optDouble("circulating_supply");
+            double total_supply = coinJson.optDouble("total_supply");
+            double max_supply = coinJson.optDouble("max_supply");
+            double ath = coinJson.optDouble("ath");
+            double ath_change_percentage = coinJson.optDouble("ath_change_percentage");
+            String ath_date = coinJson.optString("ath_date");
+            double atl = coinJson.optDouble("atl");
+            double atl_change_percentage = coinJson.optDouble("atl_change_percentage");
+            String atl_date = coinJson.optString("atl_date");
+            JSONObject roiJson = coinJson.optJSONObject("roi");
+            Coin.Roi roi = new Coin.Roi();
+            if(roiJson == null ){
+                roi=null;
+            }else{
+                roi.setTimes(roiJson.optDouble("times"));
+                roi.setCurrency(roiJson.optString("currency"));
+                roi.setPercentage(roiJson.optDouble("percentage"));
+            }
+            String last_updated = coinJson.optString("last_updated");
+
+            Coin coin = new Coin();
+            coin.setId(id);
+            coin.setName(name);
+            coin.setSymbol(symbol);
+            coin.setImage(image);
+            if(!image.isEmpty()) {
+                ImageManager imageManager = new ImageManager();
+                Log.wtf("ImageBytes", imageManager.toString());
+                Log.wtf("ImageBytes", image);
+                coin.setImageBitmap(imageManager.getBitmapFromURL(image));
+                coin.setImageBytes(imageManager.getBytesFromBitmap(coin.getImageBitmap()));
+            }
+            coin.setCurrent_price(current_price);
+            coin.setMarket_cap(market_cap);
+            coin.setMarket_cap_rank(market_cap_rank);
+            coin.setFully_diluted_valuation(fully_diluted_valuation);
+            coin.setTotal_volume(total_volume);
+            coin.setHigh_24h(high_24h);
+            coin.setLow_24h(low_24h);
+            coin.setPrice_change_24h(price_change_24h);
+            coin.setPrice_change_percentage_24h(price_change_percentage_24h);
+            coin.setMarket_cap_change_24h(market_cap_change_24h);
+            coin.setMarket_cap_change_percentage_24h(market_cap_change_percentage_24h);
+            coin.setCirculating_supply(circulating_supply);
+            coin.setTotal_supply(total_supply);
+            coin.setMax_supply(max_supply);
+            coin.setAth(ath);
+            coin.setAth_change_percentage(ath_change_percentage);
+            coin.setAth_date(ath_date);
+            coin.setAtl(atl);
+            coin.setAtl_change_percentage(atl_change_percentage);
+            coin.setAtl_date(atl_date);
+            coin.setRoi(roi);
+            coin.setLast_updated(last_updated);
+
+            // Añade el objeto Coin a la lista
+            coins.add(coin);
+        }
+        return coins;
     }
 }
 

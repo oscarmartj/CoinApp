@@ -9,6 +9,7 @@ public class NotificationUtils {
     public static final String CHANNEL_ID="coin_notifications";
     public static final CharSequence CHANNEL_NAME="Coin Price Ticker";
     public static final int NOTIFICATION_ID=1;
+    public static final String GROUP_NAME_COIN_NOTIFICATIONS="coin_group";
 
     public void createNotificationChannel(Context context) {
         NotificationManager notificationManager = (NotificationManager)

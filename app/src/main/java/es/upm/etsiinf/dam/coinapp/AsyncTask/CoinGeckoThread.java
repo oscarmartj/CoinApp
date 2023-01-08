@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
+import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 public class CoinGeckoThread implements Runnable {
@@ -71,8 +72,9 @@ public class CoinGeckoThread implements Runnable {
 
                     JSONArray coinsJson = new JSONArray(response.toString());
 
-                    List<Coin> coins = new ArrayList<>();
+                    List<Coin> coins = DataManager.setCoins(coinsJson);
 
+                    /*
                     // Recorre la lista de criptomonedas en el objeto JSON y crea objetos Coin para cada una de ellas
                     for (int i = 0; i < coinsJson.length(); i++) {
                         JSONObject coinJson = coinsJson.getJSONObject(i);
@@ -148,7 +150,7 @@ public class CoinGeckoThread implements Runnable {
 
                         // Añade el objeto Coin a la lista
                         coins.add(coin);
-                    }
+                    }*/
                     handler.post(() -> {
                         Message message = handler.obtainMessage(0, coins);
                         message.sendToTarget();
