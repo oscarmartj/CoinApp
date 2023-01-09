@@ -61,7 +61,7 @@ public class NotificationService extends JobService {
                         NotificationUtils nu = new NotificationUtils();
                         DataManager dm = new DataManager();
                         Bitmap bitmap = new ImageManager().getBitmapFromURL(coin.getImage());
-                        String currentPrice = "$"+String.format(Locale.US,"%,.2f",coin.getCurrent_price());
+                        String currentPrice = "$"+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getCurrent_price()) )+"f",coin.getCurrent_price());
 
                         //SHARE
                         String bodyNotification = dm.setPendingShareText(coin);

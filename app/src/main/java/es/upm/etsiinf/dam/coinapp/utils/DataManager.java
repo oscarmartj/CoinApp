@@ -221,7 +221,7 @@ public class DataManager {
 
     public static int obtenerPrecisionFormato(double valor) {
         int firstPositionWithout0 = DataManager.obtenerPrimeraPosicionDecimal(valor);
-        Log.i("precisionCambio",firstPositionWithout0+ " fp");
+
         if (firstPositionWithout0 > 2) {
             return firstPositionWithout0 + 1;
         } else if (firstPositionWithout0 == 2 && String.valueOf(valor).length() > 2) {
