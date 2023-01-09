@@ -14,6 +14,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.icu.math.BigDecimal;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -179,7 +180,7 @@ public class DetailActivity extends AppCompatActivity {
         fillPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.LIGHTEN));
         fillPaint.setAlpha(255);
 
-        String currentPrice = "$"+String.format(Locale.US,"%,.2f",coin.getCurrent_price());
+        String currentPrice = "$" + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getCurrent_price())) + "f", coin.getCurrent_price());
         float currentPriceWidth = fillPaint.measureText(currentPrice);
         canvas.drawText(this.coin.getName(), 260, 1100, strokePaint);
         canvas.drawText(this.coin.getName(), 260, 1100, fillPaint);

@@ -1,8 +1,10 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.ranking;
 
 import android.content.Context;
+import android.icu.math.BigDecimal;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +66,17 @@ public class RankingAdapter extends BaseAdapter {
             imageView.setImageBitmap(new ImageManager().getBitmapFromBLOB(coin.getImageBytes()));
         }
         textViewName.setText(coin.getSymbol());
-        textViewPrice.setText("$"+String.format(Locale.US,"%,.2f",coin.getCurrent_price()));
+
+        int firstPositionWithout0 = DataManager.obtenerPrimeraPosicionDecimal(coin.getCurrent_price());
+        if(firstPositionWithout0>2){
+            Log.i("firstPosition",coin.getId()+" entra aqui");
+            textViewPrice.setText("$"+String.format(Locale.US,"%,."+(firstPositionWithout0+1)+"f",coin.getCurrent_price()));
+        }else if(firstPositionWithout0==2 && String.valueOf(coin.getCurrent_price()).length()>2){
+            textViewPrice.setText("$"+String.format(Locale.US,"%,."+(firstPositionWithout0+1)+"f",coin.getCurrent_price()));
+        }else{
+            textViewPrice.setText("$"+String.format(Locale.US,"%,.2f",coin.getCurrent_price()));
+        }
+
 
         double percentage = coin.getPrice_change_percentage_24h();
 

@@ -22,7 +22,7 @@ public class NotificationCoinsThread implements Runnable {
     private String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=";
 
     public interface OnCoinsReceivedListener {
-        void onCoinsReceived(List<Coin> coins);
+        void onCoinsReceived(List<Coin> coins) throws IOException;
     }
     public NotificationCoinsThread (List<String> coins, OnCoinsReceivedListener listener) {
         this.coins = coins;
