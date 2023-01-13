@@ -12,10 +12,9 @@ public class NotificationScheduleJob {
     private static final int NOTIFICATION_JOB_ID=1;
 
     public void scheduleJob(Context context){
-        Log.i("scheduleJob","entra aqui");
         ComponentName serviceComponent = new ComponentName(context,NotificationService.class);
         JobInfo.Builder builder = new JobInfo.Builder(NOTIFICATION_JOB_ID, serviceComponent);
-        long periodicTime = TimeUnit.MINUTES.toMillis(1);
+        long periodicTime = TimeUnit.MINUTES.toMillis(15);
         builder.setPeriodic(periodicTime);
         builder.setOverrideDeadline(0);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);

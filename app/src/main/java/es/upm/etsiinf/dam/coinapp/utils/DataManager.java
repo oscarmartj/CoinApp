@@ -210,9 +210,9 @@ public class DataManager {
         String titulo="¿Como ha cambiado "+coin.getName()+" "+dollarHashtagSymbol+coin.getSymbol().toUpperCase()+"?"+"\n";
         String cambio24h = "1 " + symbolCoin + " = " + currentPrice + " " + (percentage>0.0?"+"+percentage+"%":percentage+"%") + " " + (percentage < 0.0 ? redCircle + "\n" : greenCircle + "\n");
         String detalles="Detalles:\n";
-        String cambio = "Cambio: "+(coin.getPrice_change_24h()<0.0?redCircle:greenCircle+"+")+coin.getPrice_change_24h()+dollarHashtagSymbol+"\n";
-        String low24h = "Precio más bajo (24h) = "+dollarHashtagSymbol+coin.getLow_24h()+low24hWhatEmoji+"\n";
-        String high24h = "Precio más alto (24h) = "+dollarHashtagSymbol+coin.getHigh_24h()+high24WhatEmoji+"\n";
+        String cambio = "Cambio: "+(coin.getPrice_change_24h()<0.0?redCircle:greenCircle+"+")+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h()) )+"f",coin.getPrice_change_24h())+dollarHashtagSymbol+"\n";
+        String low24h = "Precio más bajo (24h) = "+dollarHashtagSymbol+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getLow_24h()) )+"f",coin.getLow_24h())+low24hWhatEmoji+"\n";
+        String high24h = "Precio más alto (24h) = "+dollarHashtagSymbol+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getHigh_24h()) )+"f",coin.getHigh_24h())+high24WhatEmoji+"\n";
         String salto = "\n";
         String hashtag = "#"+symbolCoin+"\n";
 

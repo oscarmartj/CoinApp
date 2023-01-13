@@ -17,7 +17,7 @@ public class ProfileViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(RankingViewModel.class)) {
+        if (modelClass.isAssignableFrom(ProfileViewModel.class)) {
             return (T) new ProfileViewModel(context);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");

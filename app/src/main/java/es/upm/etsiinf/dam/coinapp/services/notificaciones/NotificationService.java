@@ -6,6 +6,7 @@ import static es.upm.etsiinf.dam.coinapp.utils.NotificationUtils.GROUP_NAME_COIN
 import static es.upm.etsiinf.dam.coinapp.utils.NotificationUtils.NOTIFICATION_COINS_GROUP_ID;
 import static es.upm.etsiinf.dam.coinapp.utils.NotificationUtils.NOTIFICATION_ID;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobParameters;
@@ -35,6 +36,7 @@ import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 import es.upm.etsiinf.dam.coinapp.utils.NotificationUtils;
 
+@SuppressLint("SpecifyJobSchedulerIdRange")
 public class NotificationService extends JobService {
     @Override
     public boolean onStartJob (JobParameters jobParameters) {
@@ -107,7 +109,7 @@ public class NotificationService extends JobService {
 
                     NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID_GROUP)
                             .setSmallIcon(R.drawable.ic_staroff)
-                            .setTicker("Notificaciones de monedas")
+                            .setContentTitle("Notificaciones de monedas")
                             .setGroup(GROUP_NAME_COIN_NOTIFICATIONS)
                             .setGroupSummary(true)
                             .setPriority(NotificationCompat.PRIORITY_HIGH);

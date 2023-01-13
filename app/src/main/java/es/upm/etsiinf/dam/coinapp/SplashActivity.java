@@ -90,6 +90,7 @@ public class SplashActivity extends AppCompatActivity {
 
             //comprobar si el usuario está registrado y logueado
             if(userIsLoggedIn()) {
+                //Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();

@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import es.upm.etsiinf.dam.coinapp.database.CoinDatabaseHelper;
@@ -59,7 +60,7 @@ public class CoinDB {
         int numRecords;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, COLUMN_MARKET_CAP_RANK);
 
         if (cursor.moveToFirst()) {
             numRecords = cursor.getCount();
@@ -70,10 +71,66 @@ public class CoinDB {
         return numRecords;
 
     }
+
+    public void updateCoins (List<Coin> coins){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        List<ContentValues> valuesList = new ArrayList<>();
+
+        for(Coin coin : coins){
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_ID, coin.getId());
+            values.put(COLUMN_SYMBOL, coin.getSymbol());
+            values.put(COLUMN_NAME, coin.getName());
+            values.put(COLUMN_CURRENT_PRICE, coin.getCurrent_price());
+            values.put(COLUMN_MARKET_CAP, coin.getMarket_cap());
+            values.put(COLUMN_MARKET_CAP_RANK, coin.getMarket_cap_rank());
+            values.put(COLUMN_FULLY_DILUTED_VALUATION, coin.getFully_diluted_valuation());
+            values.put(COLUMN_TOTAL_VOLUME, coin.getTotal_volume());
+            values.put(COLUMN_HIGH_24H, coin.getHigh_24h());
+            values.put(COLUMN_LOW_24H, coin.getLow_24h());
+            values.put(COLUMN_PRICE_CHANGE_24H, coin.getPrice_change_24h());
+            values.put(COLUMN_PRICE_CHANGE_PERCENTAGE_24H, coin.getPrice_change_percentage_24h());
+            values.put(COLUMN_MARKET_CAP_CHANGE_24H, coin.getMarket_cap_change_24h());
+            values.put(COLUMN_MARKET_CAP_CHANGE_PERCENTAGE_24H, coin.getMarket_cap_change_percentage_24h());
+            values.put(COLUMN_CIRCULATING_SUPPLY, coin.getCirculating_supply());
+            values.put(COLUMN_TOTAL_SUPPLY, coin.getTotal_supply());
+            values.put(COLUMN_MAX_SUPPLY, coin.getMax_supply());
+            values.put(COLUMN_ATH, coin.getAth());
+            values.put(COLUMN_ATH_CHANGE_PERCENTAGE, coin.getAth_change_percentage());
+            values.put(COLUMN_ATH_DATE, coin.getAth_date());
+            values.put(COLUMN_ATL, coin.getAtl());
+            values.put(COLUMN_ATL_CHANGE_PERCENTAGE, coin.getAtl_change_percentage());
+            values.put(COLUMN_ATL_DATE, coin.getAtl_date());
+            if(coin.getRoi()==null ){
+                values.put(COLUMN_ROI,"");
+            }else{
+                values.put(COLUMN_ROI, coin.getRoi().toJson());
+            }
+            values.put(COLUMN_LAST_UPDATED, coin.getLast_updated());
+            valuesList.add(values);
+        }
+
+        try {
+            String where = COLUMN_ID + " = ?";
+            db.beginTransaction();
+            for (int i = 0; i < valuesList.size(); i++) {
+                ContentValues cv = valuesList.get(i);
+                String[] whereArgs = {cv.getAsString(COLUMN_ID)};
+                db.update(TABLE_NAME, valuesList.get(i),where,whereArgs);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+
+    }
     public void insertCoins (List<Coin> coins) throws IOException{
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         List<ContentValues> valuesList = new ArrayList<>();
+
+        List<Coin> toUpdate = new LinkedList<>();
 
         for (Coin coin : coins) {
             if(countCoinById(coin.getId())==0){
@@ -111,9 +168,12 @@ public class CoinDB {
                 values.put(COLUMN_IMAGE_BITMAP, coin.getImageBitmap().toString());
 
                 valuesList.add(values);
+            }else{
+                toUpdate.add(coin);
             }
 
         }
+
         try {
             db.beginTransaction();
             for (int i = 0; i < valuesList.size(); i++) {
@@ -123,6 +183,9 @@ public class CoinDB {
         } finally {
             db.endTransaction();
         }
+
+        //Actualizar monedas en caso de haberlas
+        if(toUpdate.size()>0) updateCoins(toUpdate);
 
     }
 
@@ -137,7 +200,7 @@ public class CoinDB {
                 new String[] {id},
                 null,
                 null,
-                null
+                COLUMN_MARKET_CAP_RANK
         );
         if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
@@ -255,8 +318,7 @@ public class CoinDB {
                 selectionArgs,
                 null,
                 null,
-                null
-        );
+                COLUMN_MARKET_CAP_RANK);
 
         List<Coin> coins = new ArrayList<>();
         while (cursor.moveToNext()) {
