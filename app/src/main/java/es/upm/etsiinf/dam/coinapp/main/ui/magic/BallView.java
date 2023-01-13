@@ -5,8 +5,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -30,8 +32,9 @@ public class BallView extends View {
     private int visibleBalls = 0;
     private int notVisibleBalls = 0;
 
-    public BallView(Context context) {
-        super(context);
+    public BallView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        // Inicializar variables y configurar la vista
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

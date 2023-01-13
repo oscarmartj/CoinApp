@@ -68,7 +68,7 @@ public class SplashActivity extends AppCompatActivity {
         }else if(!isConnected() && hasData()){ //Si no tiene conexión a internet pero si que tiene datos en la db para poder mostrar offline.
             //Si esta logueado
             if(userIsLoggedIn()){
-                Intent intent = new Intent(SplashActivity.this, MainActivitypruebas.class);
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
                 //Sino esta logueado
