@@ -51,6 +51,11 @@ public class MagicFragment extends Fragment {
         viewBall = binding.viewBall;
         viewBall.setVisibility(View.VISIBLE);
 
+        //Para recordar: ¿Porque no he utilizado el ViewModelProvider=
+        //No utilizo el ViewModelProvider como en el fragmento de Ranking,
+        //porque en este caso no quiero que el ViewModel se guarde.
+        //Quiero que cada vez que se acceda al fragment, se vean las bolas,
+        //para ellos es necesario generar un nuevo viewmodel en cada instancia del fragment
         MagicViewModelFactory factory = new MagicViewModelFactory(context, mSensorManager, mAccelerometer, viewBall);
         magicViewModel = factory.create(MagicViewModel.class);
 
@@ -66,7 +71,6 @@ public class MagicFragment extends Fragment {
                     if(integer > 0){
                         viewBall.setVisibility(View.VISIBLE);
                         contentBinding.getRoot().setVisibility(View.INVISIBLE);
-
                     }
                 }
             });
