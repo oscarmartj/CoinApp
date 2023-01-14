@@ -34,12 +34,6 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
     public LiveData<Integer> getNumVisibleBalls () {
         return numVisibleBalls;
     }
-    public void setNumVisibleBalls (int value) {
-        numVisibleBalls.setValue(500);
-    }
-    public void activarSensor(){
-        mSensorManager.registerListener(this,mAccelerometer,SensorManager.SENSOR_DELAY_NORMAL);
-    }
 
     @Override
     public void onSensorChanged (SensorEvent sensorEvent) {
@@ -58,10 +52,8 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
         }
 
         mBallView.countVisibleBalls();
-        Log.i("visibleBalls",mBallView.getVisibleBalls()+"");
         if(mBallView.getVisibleBalls()==0) {
             numVisibleBalls.setValue(0);
-            Log.i("visibleBalls", "entra aqui");
             mSensorManager.unregisterListener(this);
         }
     }
