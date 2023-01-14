@@ -30,7 +30,6 @@ public class MagicFragment extends Fragment {
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private BallView viewBall;
-    private SharedPreferences sharedPreferences;
     private Context context;
     private MagicViewModel magicViewModel;
 
@@ -45,7 +44,6 @@ public class MagicFragment extends Fragment {
 
     public View onCreateView (@NonNull LayoutInflater inflater,
                               ViewGroup container, Bundle savedInstanceState) {
-        Log.i("ViewBall","entra en createview;");
 
         binding = FragmentMagicBinding.inflate(inflater, container, false);
         contentBinding = binding.includeActivity;
@@ -62,18 +60,13 @@ public class MagicFragment extends Fragment {
         if(viewBall.getVisibility() != View.INVISIBLE){
             magicViewModel.getNumVisibleBalls().observe(getViewLifecycleOwner(), integer -> {
                 if(integer ==0){
-                    Log.i("ViewBall","entra en ==;");
                     viewBall.setVisibility(View.INVISIBLE);
                     contentBinding.getRoot().setVisibility(View.VISIBLE);
                 }else{
                     if(integer > 0){
-                        Log.i("ViewBall","entra en !=;");
                         viewBall.setVisibility(View.VISIBLE);
                         contentBinding.getRoot().setVisibility(View.INVISIBLE);
-                        /*
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putInt("bolas",500);
-                        editor.apply();*/
+
                     }
                 }
             });
