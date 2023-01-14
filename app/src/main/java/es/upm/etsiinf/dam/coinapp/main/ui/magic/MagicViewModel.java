@@ -20,6 +20,7 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
     private BallView mBallView;
 
     public MagicViewModel (Context context, SensorManager mSensorManager, Sensor mAccelerometer, BallView view) {
+        Log.i("magicC","entra aqui");
         this.context = context;
         this.mSensorManager = mSensorManager;
         this.mAccelerometer = mAccelerometer;
@@ -61,12 +62,17 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
         if(mBallView.getVisibleBalls()==0) {
             numVisibleBalls.setValue(0);
             Log.i("visibleBalls", "entra aqui");
-            //mSensorManager.unregisterListener(this);
+            mSensorManager.unregisterListener(this);
         }
     }
 
     @Override
     public void onAccuracyChanged (Sensor sensor, int i) {
 
+    }
+
+    @Override
+    protected void onCleared () {
+        super.onCleared();
     }
 }

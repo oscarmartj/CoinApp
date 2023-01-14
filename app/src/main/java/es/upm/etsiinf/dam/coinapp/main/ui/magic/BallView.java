@@ -34,7 +34,6 @@ public class BallView extends View {
 
     public BallView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // Inicializar variables y configurar la vista
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
