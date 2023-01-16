@@ -1,6 +1,10 @@
 package es.upm.etsiinf.dam.coinapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -32,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import es.upm.etsiinf.dam.coinapp.services.updates.UpdateWorker;
 import es.upm.etsiinf.dam.coinapp.ui.login.LoginActivity;
 import es.upm.etsiinf.dam.coinapp.utils.TokenManager;
 
@@ -57,7 +62,12 @@ public class SplashActivity extends AppCompatActivity {
         //Si tiene conexión, elimina todas las filas para actualizar la base de datos
         //Si no tiene conexión, no eliminara las filas de la base de datos y se mostraron datos que teniamos desde la última conexión
         if(isConnected()){
-            coinDB.deleteAllCoins();
+            //coinDB.deleteAllCoins();
+            //PRIMER TRABAJO
+            WorkRequest downloadWork = new OneTimeWorkRequest.Builder(UpdateWorker.class)
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    .build();
+            WorkManager.getInstance(this).enqueue(downloadWork);
         }
 
         //Si no tiene conexión a internet y no tiene datos de las monedas guardados en la base de datos

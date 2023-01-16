@@ -48,42 +48,41 @@ public class CoinGeckoThread implements Runnable {
     @Override
     public void run () {
         try {
-            if(page<=maxPages){
-                Log.i("Thread","If del run");
-                URL url = coins.size()>0?
-                        new URL("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page="+coins.size()+"&page=1")
-                        :
-                        new URL(API_URL + "page=" + page);
-                Log.i("PageThread",url.toString());
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
+            Log.i("Thread","If del run");
+            URL url = coins.size()>0?
+                    new URL("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page="+coins.size()+"&page=1")
+                    :
+                    new URL(API_URL + "page=" + page);
+            Log.i("PageThread",url.toString());
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
 
-                if(connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    Log.i("Thread","Entra en el OK del http");
-                    InputStream inputStream = connection.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Log.i("Thread","Entra en el OK del http");
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-
-                    JSONArray coinsJson = new JSONArray(response.toString());
-
-                    List<Coin> coins = DataManager.setCoins(coinsJson);
-
-                    handler.post(() -> {
-                        Message message = handler.obtainMessage(0, coins);
-                        message.sendToTarget();
-                    });
-
-                }else{
-                    Message message = handler.obtainMessage(1, null);
-                    message.sendToTarget();
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
                 }
+
+                JSONArray coinsJson = new JSONArray(response.toString());
+
+                List<Coin> coins = DataManager.setCoins(coinsJson);
+
+                handler.post(() -> {
+                    Message message = handler.obtainMessage(0, coins);
+                    message.sendToTarget();
+                });
+
+            }else{
+                Message message = handler.obtainMessage(1, null);
+                message.sendToTarget();
             }
+
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
