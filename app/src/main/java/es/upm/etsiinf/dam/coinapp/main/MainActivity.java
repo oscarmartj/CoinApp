@@ -1,5 +1,7 @@
 package es.upm.etsiinf.dam.coinapp.main;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -26,6 +28,7 @@ import es.upm.etsiinf.dam.coinapp.SplashActivity;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityMainBinding;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationScheduleJob;
+import es.upm.etsiinf.dam.coinapp.services.updates.job.UpdateScheduleJob;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.NotificationUtils;
 
@@ -40,11 +43,15 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        NotificationUtils nutils = new NotificationUtils();
-        nutils.createNotificationChannel(this); //crear canal de notificaciones
 
-        NotificationScheduleJob job = new NotificationScheduleJob();
-        job.scheduleJob(this);
+        JobScheduler jobScheduler = getSystemService(JobScheduler.class);
+        JobInfo jobInfo = jobScheduler.getPendingJob(999);
+        if(jobInfo == null){ //que un nuevo trabajo no reemplace el que ya existe.
+            NotificationUtils nutils = new NotificationUtils();
+            nutils.createNotificationChannel(this); //crear canal de notificaciones
+            NotificationScheduleJob job = new NotificationScheduleJob();
+            job.scheduleJob(this);
+        }
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each

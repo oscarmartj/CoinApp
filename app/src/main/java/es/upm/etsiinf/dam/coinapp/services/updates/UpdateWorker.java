@@ -30,26 +30,12 @@ public class UpdateWorker extends Worker {
     @Override
     public Result doWork () {
         CoinDB db = new CoinDB(context);
-        /*Handler handler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage (@NonNull Message message) {
-                if(message.what == 0) {
-                    Log.e("UpdateWorker", "OK en Updateworker");
-                    try {
-                        db.insertCoins((List<Coin>) message.obj);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Log.e("UpdateWorker", "Error en Updateworker");
-                }
-                return true;
-            }
-        });*/
+        boolean flag = getInputData().getBoolean("flag",false);
 
-        UpdateServiceThread ust = new UpdateServiceThread(coins -> {
-            if(coins.size()>0) {
-                Log.e("UpdateWorker", "OK en Updateworker");
+
+        UpdateServiceThread ust = new UpdateServiceThread(flag, coins -> {
+            if(coins.size() > 0) {
+                Log.e("ListenerUpdate", "OK en Updateworker");
                 try {
                     db.insertCoins(coins);
                 } catch (IOException e) {

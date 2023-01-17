@@ -21,6 +21,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -38,6 +39,7 @@ import es.upm.etsiinf.dam.coinapp.utils.NotificationUtils;
 
 @SuppressLint("SpecifyJobSchedulerIdRange")
 public class NotificationService extends JobService {
+    private String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=";
     @Override
     public boolean onStartJob (JobParameters jobParameters) {
         Context context = getApplicationContext();
@@ -46,10 +48,8 @@ public class NotificationService extends JobService {
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
         if(activeNetwork != null && activeNetwork.isConnectedOrConnecting()){
-            Log.i("scheduleJob","entra aqui donde las notis");
             SharedPreferences sharedPreferences = getSharedPreferences("favorites", MODE_PRIVATE);
             List<String> coins = DataManager.getFavorites(sharedPreferences);
-            Log.i("scheduleJob",coins.toString());
 
             NotificationCoinsThread thread = new NotificationCoinsThread(coins, new NotificationCoinsThread.OnCoinsReceivedListener() {
                 @Override
@@ -69,11 +69,12 @@ public class NotificationService extends JobService {
                         String bodyNotification = dm.setPendingShareText(coin);
                         PendingIntent sharePendingIntent = nu.createPendingIntent(NotificationService.this, bodyNotification, coin);
 
-                        //To MainActivity
+                        //To Detail
                         Intent intent = new Intent(NotificationService.this, DetailActivity.class);
                         intent.putExtra("coin_id",coin.getId());
 
                         PendingIntent pendingIntent;
+
                         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
                             pendingIntent = PendingIntent.getActivity(
                                     context,
@@ -81,13 +82,16 @@ public class NotificationService extends JobService {
                                             + Integer.toString(0)),
                                     intent,
                                     PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_MUTABLE );
+
                         }else{
+
                             pendingIntent = PendingIntent.getActivity(
                                     context,
                                     Integer.parseInt(Integer.toString(coin.getMarket_cap_rank())
                                             + Integer.toString(0)),
                                     intent,
                                     PendingIntent.FLAG_UPDATE_CURRENT );
+
                         }
 
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID)

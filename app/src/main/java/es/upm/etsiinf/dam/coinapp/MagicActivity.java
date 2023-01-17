@@ -60,7 +60,7 @@ public class MagicActivity extends Activity implements SensorEventListener {
         double magnitude = Math.sqrt(x*x + y*y + z*z); //vector aceleración
         double magnitudeMinus = magnitude-gravity;
 
-        double magnitudeThreshold = 1.2;
+        double magnitudeThreshold = 1.5;
 
         if((Math.abs(magnitudeMinus)) > Math.abs(magnitudeThreshold)) {
             float speedFactor = (float) (magnitudeMinus / magnitudeThreshold);

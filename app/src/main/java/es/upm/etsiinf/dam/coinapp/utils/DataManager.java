@@ -25,6 +25,7 @@ import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 public class DataManager {
+
     public static void saveDatabaseVersion(int version, Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();

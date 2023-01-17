@@ -20,23 +20,25 @@ import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 
 public class UpdateServiceThread implements Runnable{
 
-    private String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=";
+    private String API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=";
 
-    OnCoinsReceivedListener listener;
+    OnCoinsServiceReceivedListener listener;
+    private boolean flag;
 
-    public interface OnCoinsReceivedListener {
-        void onCoinsReceived(List<Coin> coins) throws IOException;
+    public interface OnCoinsServiceReceivedListener {
+        void onCoinsServiceReceived(List<Coin> coins);
     }
 
-    public UpdateServiceThread (OnCoinsReceivedListener listener) {
+    public UpdateServiceThread (boolean flag, OnCoinsServiceReceivedListener listener) {
         this.listener = listener;
+        this.flag = flag;
     }
 
     @Override
     public void run () {
         List<Coin> coins = new ArrayList<>();
         try{
-            for(int i=0; i<1; i++){
+            for(int i = 0; (flag ?i<1:i<10); i++){
                 URL url = new URL(API_URL+i);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -62,24 +64,9 @@ public class UpdateServiceThread implements Runnable{
             e.printStackTrace();
         } finally {
             if(coins.size()>0){
-                /*handler.post(() -> {
-                    Message message = handler.obtainMessage(0, coins);
-                    message.sendToTarget();
-                });*/
-                try {
-                    listener.onCoinsReceived(coins);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                listener.onCoinsServiceReceived(coins);
             }else{
-                try {
-                    listener.onCoinsReceived(null);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                /*Message message = handler.obtainMessage(1, null);
-                message.sendToTarget();*/
+                listener.onCoinsServiceReceived(null);
             }
         }
     }
