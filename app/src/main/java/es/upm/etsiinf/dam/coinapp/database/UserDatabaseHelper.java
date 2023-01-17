@@ -27,13 +27,15 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_USERNAME = "username";
     private static final String COLUMN_PASSWORD = "password";
     private static final String COLUMN_EMAIL = "email";
+    private static final String COLUMN_PROFILEIMAGE = "profileimage";
 
     // Sentencia SQL para crear la tabla de usuarios
     private static final String SQL_CREATE_TABLE_USERS =
             "CREATE TABLE " + TABLE_NAME_USERS + "(" +
                     COLUMN_USERNAME + " TEXT PRIMARY KEY," +
                     COLUMN_PASSWORD + " TEXT," +
-                    COLUMN_EMAIL + " TEXT UNIQUE" + ")";
+                    COLUMN_EMAIL + " TEXT UNIQUE," +
+                    COLUMN_PROFILEIMAGE + " BLOB" + ")";
 
 
     private final Security security = new Security();
@@ -55,7 +57,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertUser (String username, String password, String email) throws NoSuchAlgorithmException {
+    public boolean insertUser (String username, String password, String email, byte[] profileImage) throws NoSuchAlgorithmException {
         // Obtiene la base de datos en modo escritura
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -69,6 +71,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME, username);
         values.put(COLUMN_PASSWORD, password);
         values.put(COLUMN_EMAIL, email);
+        values.put(COLUMN_PROFILEIMAGE,profileImage);
 
         // Inserta un nuevo registro en la tabla
         long rowId = db.insert(TABLE_NAME_USERS, null, values);
@@ -76,6 +79,20 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return rowId != -1;
     }
+
+    public void updateProfileImage(String email, byte[] image) {
+        // Obtiene la base de datos en modo escritura
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Crea un nuevo mapa de valores donde se almacenará la imagen
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PROFILEIMAGE, image);
+
+        // Actualiza el registro de la tabla de usuarios con el email especificado
+        db.update(TABLE_NAME_USERS, values, COLUMN_EMAIL + "= ?", new String[] { email });
+        db.close();
+    }
+
 
     public User getUserByEmail(String email) {
         User user = null;
@@ -90,7 +107,8 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 String username = cursor.getString(0);
                 String password = cursor.getString(1);
-                user = new User(username, password, email);
+                byte[] profileImage = cursor.getBlob(3);
+                user = new User(username, password, email, profileImage);
             }
         } catch (Exception e) {
             Log.e("UserDatabaseHelper", "Error al obtener usuario por email", e);

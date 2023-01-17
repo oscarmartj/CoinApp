@@ -1,6 +1,7 @@
 package es.upm.etsiinf.dam.coinapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -51,6 +52,7 @@ import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationScheduleJo
 import es.upm.etsiinf.dam.coinapp.services.updates.UpdateWorker;
 import es.upm.etsiinf.dam.coinapp.services.updates.job.UpdateScheduleJob;
 import es.upm.etsiinf.dam.coinapp.ui.login.LoginActivity;
+import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.TokenManager;
 
 
@@ -60,12 +62,15 @@ public class SplashActivity extends AppCompatActivity {
     private List<Coin> coins;
     private int splashDuration;
     private SharedPreferences preferences;
+    private long lastSuccesfulWork;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         preferences = getSharedPreferences("user_preferences", MODE_PRIVATE);
+        lastSuccesfulWork = DataManager.getSuccesfullTime(this);
+        Log.i("Work",lastSuccesfulWork+"");
 
         ImageView logoImageView = findViewById(R.id.logo);
         TextView noInternetTW = findViewById(R.id.textview_centrado);
@@ -78,15 +83,17 @@ public class SplashActivity extends AppCompatActivity {
 
             //coinDB.deleteAllCoins();
             //PRIMER TRABAJO
-            /*
-            Data data = new Data.Builder().putBoolean("flag",true).build();
-            WorkRequest downloadWork = new OneTimeWorkRequest.Builder(UpdateWorker.class)
-                    .addTag("UpdateWorker")
-                    .setInputData(data)
-                    .build();
-            WorkManager.getInstance(this).beginUniqueWork("UpdateWorker", ExistingWorkPolicy.REPLACE, (OneTimeWorkRequest) downloadWork).enqueue();*/
+            long currentTime= System.currentTimeMillis();
+            if(currentTime - lastSuccesfulWork > TimeUnit.HOURS.toMillis(1)){
+                Log.i("UpdateWorker","entra en el if");
+                WorkRequest downloadWork = new OneTimeWorkRequest.Builder(UpdateWorker.class)
+                        .addTag("UpdateWorker")
+                        .build();
+                WorkManager.getInstance(this).beginUniqueWork("UpdateWorker", ExistingWorkPolicy.REPLACE, (OneTimeWorkRequest) downloadWork).enqueue();
 
-            //SEGUNDO TRABAJO Y QUE NO VA A SER INSTANTANEO, SINO PERIODICO
+            }
+
+            //SEGUNDO TRABAJO Y QUE NO VA A SER INSTANTANEO, SINO PERIODICO Y PERSISTENTE
 
             JobScheduler jobScheduler = getSystemService(JobScheduler.class);
             JobInfo jobInfo = jobScheduler.getPendingJob(998);

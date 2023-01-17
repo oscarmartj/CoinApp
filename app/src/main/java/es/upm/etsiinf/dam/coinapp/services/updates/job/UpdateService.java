@@ -14,9 +14,9 @@ import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 public class UpdateService extends JobService {
     @Override
     public boolean onStartJob (JobParameters jobParameters) {
-        /*
+
         CoinDB db = new CoinDB(getApplicationContext());
-        UpdateServiceThread ust = new UpdateServiceThread(false, coins -> {
+        UpdateServiceThread ust = new UpdateServiceThread(coins -> {
             if(coins.size() > 0) {
                 Log.e("ListenerUpdate", "OK en Updateworker");
                 try {
@@ -29,7 +29,7 @@ public class UpdateService extends JobService {
             }
         });
         Thread thread = new Thread(ust);
-        thread.start();*/
+        thread.start();
 
         return false;
     }

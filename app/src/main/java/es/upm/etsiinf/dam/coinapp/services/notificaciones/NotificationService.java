@@ -51,78 +51,80 @@ public class NotificationService extends JobService {
             SharedPreferences sharedPreferences = getSharedPreferences("favorites", MODE_PRIVATE);
             List<String> coins = DataManager.getFavorites(sharedPreferences);
 
-            NotificationCoinsThread thread = new NotificationCoinsThread(coins, new NotificationCoinsThread.OnCoinsReceivedListener() {
-                @Override
-                public void onCoinsReceived (List<Coin> coins) throws IOException{
-                    coins.sort(Comparator.comparingInt(Coin::getMarket_cap_rank));
+            if(!coins.isEmpty()) {
+                NotificationCoinsThread thread = new NotificationCoinsThread(coins, new NotificationCoinsThread.OnCoinsReceivedListener() {
+                    @Override
+                    public void onCoinsReceived (List<Coin> coins) throws IOException {
+                        coins.sort(Comparator.comparingInt(Coin::getMarket_cap_rank));
 
-                    StringBuilder ids= new StringBuilder();
-                    Log.i("scheduleJob","final coins"+coins.toString());
-                    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    for(Coin coin: coins){
-                        NotificationUtils nu = new NotificationUtils();
-                        DataManager dm = new DataManager();
-                        Bitmap bitmap = new ImageManager().getBitmapFromURL(coin.getImage());
-                        String currentPrice = "$"+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getCurrent_price()) )+"f",coin.getCurrent_price());
+                        StringBuilder ids = new StringBuilder();
+                        Log.i("scheduleJob", "final coins" + coins.toString());
+                        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        for (Coin coin : coins) {
+                            NotificationUtils nu = new NotificationUtils();
+                            DataManager dm = new DataManager();
+                            Bitmap bitmap = new ImageManager().getBitmapFromURL(coin.getImage());
+                            String currentPrice = "$" + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getCurrent_price())) + "f", coin.getCurrent_price());
 
-                        //SHARE
-                        String bodyNotification = dm.setPendingShareText(coin);
-                        PendingIntent sharePendingIntent = nu.createPendingIntent(NotificationService.this, bodyNotification, coin);
+                            //SHARE
+                            String bodyNotification = dm.setPendingShareText(coin);
+                            PendingIntent sharePendingIntent = nu.createPendingIntent(NotificationService.this, bodyNotification, coin);
 
-                        //To Detail
-                        Intent intent = new Intent(NotificationService.this, DetailActivity.class);
-                        intent.putExtra("coin_id",coin.getId());
+                            //To Detail
+                            Intent intent = new Intent(NotificationService.this, DetailActivity.class);
+                            intent.putExtra("coin_id", coin.getId());
 
-                        PendingIntent pendingIntent;
+                            PendingIntent pendingIntent;
 
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                            pendingIntent = PendingIntent.getActivity(
-                                    context,
-                                    Integer.parseInt(Integer.toString(coin.getMarket_cap_rank())
-                                            + Integer.toString(0)),
-                                    intent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_MUTABLE );
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                pendingIntent = PendingIntent.getActivity(
+                                        context,
+                                        Integer.parseInt(Integer.toString(coin.getMarket_cap_rank())
+                                                + Integer.toString(0)),
+                                        intent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
-                        }else{
+                            } else {
 
-                            pendingIntent = PendingIntent.getActivity(
-                                    context,
-                                    Integer.parseInt(Integer.toString(coin.getMarket_cap_rank())
-                                            + Integer.toString(0)),
-                                    intent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT );
+                                pendingIntent = PendingIntent.getActivity(
+                                        context,
+                                        Integer.parseInt(Integer.toString(coin.getMarket_cap_rank())
+                                                + Integer.toString(0)),
+                                        intent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT);
 
+                            }
+
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID)
+                                    .setSmallIcon(R.drawable.ic_staron)
+                                    .setLargeIcon(bitmap)
+                                    .setContentTitle(coin.getName())
+                                    .setContentText("El precio actual de " + coin.getSymbol().toUpperCase() + " es de " + currentPrice)
+                                    .setStyle(new NotificationCompat.BigTextStyle()
+                                            .bigText(bodyNotification))
+                                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                    .setGroup(GROUP_NAME_COIN_NOTIFICATIONS)
+                                    .setContentIntent(pendingIntent)
+                                    .addAction(R.drawable.ic_share_black_24dp, "Share", sharePendingIntent);
+
+                            int notificationID_resultado = Integer.parseInt(Integer.toString(NOTIFICATION_ID) + Integer.toString(coin.getMarket_cap_rank()));
+                            ids.append(coin.getMarket_cap_rank());
+                            notificationManager.notify(notificationID_resultado, builder.build());
                         }
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID)
-                                .setSmallIcon(R.drawable.ic_staron)
-                                .setLargeIcon(bitmap)
-                                .setContentTitle(coin.getName())
-                                .setContentText("El precio actual de "+coin.getSymbol().toUpperCase()+ " es de "+currentPrice)
-                                .setStyle(new NotificationCompat.BigTextStyle()
-                                        .bigText(bodyNotification))
-                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID_GROUP)
+                                .setSmallIcon(R.drawable.ic_staroff)
+                                .setContentTitle("Notificaciones de monedas")
                                 .setGroup(GROUP_NAME_COIN_NOTIFICATIONS)
-                                .setContentIntent(pendingIntent)
-                                .addAction(R.drawable.ic_share_black_24dp,"Share",sharePendingIntent);
+                                .setGroupSummary(true)
+                                .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-                        int notificationID_resultado = Integer.parseInt(Integer.toString(NOTIFICATION_ID) +Integer.toString(coin.getMarket_cap_rank()));
-                        ids.append(coin.getMarket_cap_rank());
-                        notificationManager.notify(notificationID_resultado, builder.build());
+                        notificationManager.notify(Integer.parseInt(NOTIFICATION_COINS_GROUP_ID + ids.toString()), summaryBuilder.build());
                     }
+                });
 
-                    NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID_GROUP)
-                            .setSmallIcon(R.drawable.ic_staroff)
-                            .setContentTitle("Notificaciones de monedas")
-                            .setGroup(GROUP_NAME_COIN_NOTIFICATIONS)
-                            .setGroupSummary(true)
-                            .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-                    notificationManager.notify(Integer.parseInt(NOTIFICATION_COINS_GROUP_ID+ ids.toString()),summaryBuilder.build());
-                }
-            });
-
-            new Thread(thread).start();
+                new Thread(thread).start();
+            }
         }
         return false;
     }

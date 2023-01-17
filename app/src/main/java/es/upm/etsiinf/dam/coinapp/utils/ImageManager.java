@@ -1,5 +1,6 @@
 package es.upm.etsiinf.dam.coinapp.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,12 +16,22 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import es.upm.etsiinf.dam.coinapp.R;
+
 //Bitmap bitmap1 = imageManager1.getBitmapFromURL();
 public class ImageManager {
 
     public ImageManager () {
     }
 
+    public byte[] getBLOBFromResources(Context context, int resource){
+        Bitmap image = BitmapFactory.decodeResource(context.getResources(), resource);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+        return stream.toByteArray();
+
+    }
 
     public Bitmap getBitmapFromURL (String imageURL) throws IOException {
         URL website = new URL(imageURL);

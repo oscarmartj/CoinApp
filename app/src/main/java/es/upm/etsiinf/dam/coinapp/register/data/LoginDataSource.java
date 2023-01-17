@@ -2,9 +2,11 @@ package es.upm.etsiinf.dam.coinapp.register.data;
 
 import android.content.Context;
 
+import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.register.data.model.LoggedInUser;
+import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +27,8 @@ public class LoginDataSource {
         UserDatabaseHelper userDBHelper = new UserDatabaseHelper(context);
 
         try {
-            boolean resultado = userDBHelper.insertUser(user.getUsername(),user.getPassword(),user.getEmail());
+            byte[] profileImage = new ImageManager().getBLOBFromResources(context, R.drawable.defaultprofile);
+            boolean resultado = userDBHelper.insertUser(user.getUsername(),user.getPassword(),user.getEmail(),profileImage);
             if(resultado){
                 LoggedInUser fakeUser =
                         new LoggedInUser(
