@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true"
+    android:id="@+id/rl_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".main.ui.profile.ProfileFragment">
 
     <include
+        android:id="@+id/include_content_profile"
         layout="@layout/content_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-</androidx.core.widget.NestedScrollView>
+</ScrollView>

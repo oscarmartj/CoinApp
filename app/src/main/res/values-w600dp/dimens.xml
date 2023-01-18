@@ -3,4 +3,6 @@
     <dimen name="fab_margin">48dp</dimen>
     <dimen name="text_margin">48dp</dimen>
     <dimen name="height_between_edittext_profile">64dp</dimen>
+    <dimen name="btn_edit_profile">120dp</dimen>
+    <dimen name="height_between_edittext_btn">45dp</dimen>
 </resources>

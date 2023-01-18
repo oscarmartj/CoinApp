@@ -9,4 +9,6 @@
     <dimen name="app_bar_height">180dp</dimen>
 
     <dimen name="height_between_edittext_profile">32dp</dimen>
+    <dimen name="btn_edit_profile">60dp</dimen>
+    <dimen name="height_between_edittext_btn">20dp</dimen>
 </resources>

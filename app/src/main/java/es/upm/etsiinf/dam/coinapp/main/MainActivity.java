@@ -30,6 +30,7 @@ import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationScheduleJob;
 import es.upm.etsiinf.dam.coinapp.services.updates.job.UpdateScheduleJob;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
+import es.upm.etsiinf.dam.coinapp.utils.KeyboardUtil;
 import es.upm.etsiinf.dam.coinapp.utils.NotificationUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
 
     }
 
