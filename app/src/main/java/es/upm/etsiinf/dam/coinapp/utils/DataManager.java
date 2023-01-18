@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.icu.math.BigDecimal;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Patterns;
 
 import androidx.work.impl.WorkDatabase;
 import androidx.work.impl.model.WorkSpec;
@@ -279,6 +280,17 @@ public class DataManager {
             }
         }
         return -1;
+    }
+
+    public static boolean isEmailValid (String email) {
+        if(email == null) {
+            return false;
+        }
+        if(email.contains("@")) {
+            return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        } else {
+            return !email.trim().isEmpty();
+        }
     }
 }
 

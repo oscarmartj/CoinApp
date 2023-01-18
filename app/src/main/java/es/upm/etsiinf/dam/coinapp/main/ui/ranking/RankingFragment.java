@@ -13,12 +13,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import es.upm.etsiinf.dam.coinapp.databinding.FragmentRankingBinding;
+import es.upm.etsiinf.dam.coinapp.main.MainActivity;
 import es.upm.etsiinf.dam.coinapp.main.ui.ranking.singleextended.DetailActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
@@ -28,6 +30,7 @@ public class RankingFragment extends Fragment {
     private FragmentRankingBinding binding;
     private RankingAdapter rankingAdapter;
     private Context context;
+
 
     public View onCreateView (@NonNull LayoutInflater inflater,
                               ViewGroup container, Bundle savedInstanceState) {

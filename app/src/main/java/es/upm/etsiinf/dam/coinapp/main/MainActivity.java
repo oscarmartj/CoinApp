@@ -11,6 +11,7 @@ import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
             NotificationScheduleJob job = new NotificationScheduleJob();
             job.scheduleJob(this);
         }
-
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -64,7 +64,5 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-
     }
-
 }

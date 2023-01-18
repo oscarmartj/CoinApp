@@ -15,9 +15,9 @@
             android:id="@+id/topAppBar_editprofile"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:menu="@menu/top_app_bar_edit"
+            app:menu="@menu/top_app_bar_edit_profile"
             app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-            app:title="Edit Profile" />
+            app:title="Edit profile" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -28,6 +28,7 @@
 
         <include
             layout="@layout/content_edit"
+            android:id="@+id/include_content_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </androidx.core.widget.NestedScrollView>
