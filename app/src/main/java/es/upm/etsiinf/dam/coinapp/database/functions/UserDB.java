@@ -86,4 +86,21 @@ public class UserDB {
         }
         return user;
     }
+
+    public int countUsersByEmail(String email) {
+        int count = 0;
+        String query = "SELECT COUNT(*) FROM " + TABLE_NAME_USERS + " WHERE " + COLUMN_EMAIL + " = ?";
+        String[] selectionArgs = {email};
+
+        try (
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                Cursor cursor = db.rawQuery(query, selectionArgs)
+        ) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        }
+        return count;
+    }
+
 }

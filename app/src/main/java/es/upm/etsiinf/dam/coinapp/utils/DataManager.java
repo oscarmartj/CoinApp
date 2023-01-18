@@ -292,5 +292,13 @@ public class DataManager {
             return !email.trim().isEmpty();
         }
     }
+
+    public static boolean isUserNameValid(String username) {
+        if (username == null) {
+            return false;
+        }
+        boolean matches = username.matches("^[a-zA-Z0-9._-]{3,}$");
+        return matches;
+    }
 }
 

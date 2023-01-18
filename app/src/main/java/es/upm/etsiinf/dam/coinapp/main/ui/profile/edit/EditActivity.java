@@ -1,71 +1,58 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.profile.edit;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import es.upm.etsiinf.dam.coinapp.R;
-import es.upm.etsiinf.dam.coinapp.databinding.ActivityDetailBinding;
+import es.upm.etsiinf.dam.coinapp.database.functions.UserDB;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityEditBinding;
-import es.upm.etsiinf.dam.coinapp.main.ui.profile.ProfileViewModel;
-import es.upm.etsiinf.dam.coinapp.main.ui.profile.ProfileViewModelFactory;
-import es.upm.etsiinf.dam.coinapp.main.ui.profile.edit.viewmodel.EditViewModel;
-import es.upm.etsiinf.dam.coinapp.main.ui.profile.edit.viewmodel.EditViewModelFactory;
-import es.upm.etsiinf.dam.coinapp.register.ui.login.LoginViewModel;
-import es.upm.etsiinf.dam.coinapp.register.ui.login.LoginViewModelFactory;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 public class EditActivity extends AppCompatActivity {
 
     private ActivityEditBinding binding;
-    private EditViewModel editViewModel;
+    private UserDB userDB;
+
+    private String usuarioFinal;
+    private String emailFinal;
+    private Drawable imageFinal;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         ImageManager imageManager = new ImageManager();
+        userDB = new UserDB(this);
 
-
-        /*
-            private final String usuario;
-    private final String email;
-    private final Drawable imageProfile;
-    private final SharedPreferences sharedPreferences;
-    private final Context context;
-         */
         TextInputEditText user = findViewById(R.id.tiet_user_edit);
         TextInputEditText email = findViewById(R.id.tiet_email_edit);
+        TextInputLayout user_layout = findViewById(R.id.til_user_edit);
+        TextInputLayout email_layout = findViewById(R.id.til_email_edit);
+
         ShapeableImageView ip_profile = findViewById(R.id.iv_circle_profile_edit);
 
         String userText = getIntent().getStringExtra("username");
+        usuarioFinal = userText;
         String emailText = getIntent().getStringExtra("email");
+        emailFinal = emailText;
         Drawable imageProfile = imageManager.getDrawableFromByte(getIntent().getByteArrayExtra("imageProfile"));
+        imageFinal = imageProfile;
 
-        editViewModel = new EditViewModelFactory(this,
-                getSharedPreferences("login_preferences",MODE_PRIVATE),
-                userText, emailText, imageProfile
-        ).create(EditViewModel.class);
+        user.setText(usuarioFinal);
+        email.setText(emailFinal);
+        ip_profile.setImageDrawable(imageFinal);
 
-        user.setText(userText);
-        email.setText(emailText);
-        ip_profile.setImageDrawable(imageProfile);
 
         user.addTextChangedListener(new TextWatcher() {
             @Override
@@ -80,7 +67,15 @@ public class EditActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged (Editable editable) {
-                editViewModel.changeUsername(user.getText().toString());
+                if(DataManager.isUserNameValid(user.getText().toString())){
+                    usuarioFinal = user.getText().toString();
+                }else{
+                    if(user.getText().toString().length()<3){
+                        user_layout.setError("Minimum 3 characters.");
+                    }else{
+                        user_layout.setError("Invalid username format (a-z, A-Z,0-9,._-).");
+                    }
+                }
             }
         });
 
@@ -98,13 +93,18 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged (Editable editable) {
                 if(DataManager.isEmailValid(email.getText().toString())){
-                    editViewModel.changeEmail(email.getText().toString());
+                    if(userDB.countUsersByEmail(email.getText().toString())>0){
+                        email_layout.setError("Already exist user with this email");
+                    }else{
+                        emailFinal=email.getText().toString();
+                    }
                 }else{
-                    String hola="hola";
+                    email_layout.setError("Invalid email format.");
                 }
 
             }
         });
+
 
 
         MaterialToolbar toolbar = findViewById(R.id.topAppBar_editprofile);
