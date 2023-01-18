@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import es.upm.etsiinf.dam.coinapp.data.model.LoggedInUser;
+import es.upm.etsiinf.dam.coinapp.database.functions.UserDB;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
 import es.upm.etsiinf.dam.coinapp.utils.Security;
@@ -21,10 +22,9 @@ public class LoginDataSource {
         this.context = context;
     }
     public Result<LoggedInUser> login (String username, String password) {
-
         try {
             //Comprobamos si los datos son correctos
-            User user = new UserDatabaseHelper(context).getUserByEmail(username);
+            User user = new UserDB(context).getUserByEmail(username);
             if(user!=null){
                 if(new Security().checkPassword(password,user.getPassword())){
                     //Guardamos username y email por si fuera necesario utilizarlos en algun punto de la aplicación

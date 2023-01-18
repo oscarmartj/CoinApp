@@ -27,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
 
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
+import es.upm.etsiinf.dam.coinapp.database.functions.UserDB;
 import es.upm.etsiinf.dam.coinapp.main.MainActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.register.ui.login.RegisterActivity;
@@ -160,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUiWithUser (LoggedInUserView model) {
 
         //formación de mensaje
-        User user = new UserDatabaseHelper(this).getUserByEmail(model.getDisplayName());
+        User user = new UserDB(this).getUserByEmail(model.getDisplayName());
         String usuario = Usernames.firstToUppercase(user.getUsername());
         String welcome = getResources().getString(R.string.welcome, usuario);
 

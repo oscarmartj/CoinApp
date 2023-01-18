@@ -4,6 +4,7 @@ import android.content.Context;
 
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.UserDatabaseHelper;
+import es.upm.etsiinf.dam.coinapp.database.functions.UserDB;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.register.data.model.LoggedInUser;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
@@ -24,11 +25,11 @@ public class LoginDataSource {
     public Result<LoggedInUser> login (String username, String email, String password) {
 
         User user = new User(username,password,email);
-        UserDatabaseHelper userDBHelper = new UserDatabaseHelper(context);
+        UserDB userDB = new UserDB(context);
 
         try {
             byte[] profileImage = new ImageManager().getBLOBFromResources(context, R.drawable.defaultprofile);
-            boolean resultado = userDBHelper.insertUser(user.getUsername(),user.getPassword(),user.getEmail(),profileImage);
+            boolean resultado = userDB.insertUser(user.getUsername(),user.getPassword(),user.getEmail(),profileImage);
             if(resultado){
                 LoggedInUser fakeUser =
                         new LoggedInUser(

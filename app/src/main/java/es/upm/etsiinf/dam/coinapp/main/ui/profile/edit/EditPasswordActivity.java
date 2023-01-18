@@ -1,31 +1,28 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.profile.edit;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityEditBinding;
+import es.upm.etsiinf.dam.coinapp.databinding.ActivityEditpasswordBinding;
 
-public class EditActivity extends AppCompatActivity {
+public class EditPasswordActivity extends AppCompatActivity {
 
-    private ActivityEditBinding binding;
+    private ActivityEditpasswordBinding binding;
     @Override
-    protected void onCreate (Bundle savedInstanceState) {
+    protected void onCreate (@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit);
+        setContentView(R.layout.activity_editpassword);
 
-        binding = ActivityEditBinding.inflate(getLayoutInflater());
+        binding = ActivityEditpasswordBinding.inflate(getLayoutInflater());
 
-        MaterialToolbar toolbar = findViewById(R.id.topAppBar_editprofile);
+        MaterialToolbar toolbar = findViewById(R.id.topAppBar_editpassword);
 
         toolbar.setNavigationOnClickListener(view -> {
             finish();

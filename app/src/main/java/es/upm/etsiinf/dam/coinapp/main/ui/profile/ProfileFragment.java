@@ -2,26 +2,24 @@ package es.upm.etsiinf.dam.coinapp.main.ui.profile;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import es.upm.etsiinf.dam.coinapp.databinding.FragmentProfileBinding;
 import es.upm.etsiinf.dam.coinapp.main.ui.profile.edit.EditActivity;
-import es.upm.etsiinf.dam.coinapp.utils.KeyboardUtil;
+import es.upm.etsiinf.dam.coinapp.main.ui.profile.edit.EditPasswordActivity;
 
 public class ProfileFragment extends Fragment {
 
@@ -31,13 +29,12 @@ public class ProfileFragment extends Fragment {
                               ViewGroup container, Bundle savedInstanceState) {
         Context context = requireActivity();
         requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        SharedPreferences sp = context.getSharedPreferences("login_preferences",Context.MODE_PRIVATE);
         ProfileViewModel profileViewModel =
-                new ViewModelProvider(this, new ProfileViewModelFactory(context)).get(ProfileViewModel.class);
+                new ViewModelProvider(this, new ProfileViewModelFactory(context,sp)).get(ProfileViewModel.class);
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        new KeyboardUtil(getActivity(),root);
 
         Button btn = binding.includeContentProfile.btnEditProfile;
         btn.setOnClickListener(new View.OnClickListener() {
@@ -48,11 +45,21 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        TextView changePassword = binding.includeContentProfile.twChangepassword;
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view) {
+                Intent intent = new Intent(context, EditPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+        TextInputEditText user = binding.includeContentProfile.tietUser;
+        TextInputEditText email = binding.includeContentProfile.tietEmail;
+
+        profileViewModel.getUsuario().observe(getViewLifecycleOwner(), user::setText);
+        profileViewModel.getEmail().observe(getViewLifecycleOwner(), email::setText);
 
 
-        /*
-        final TextView textView = binding.textNotifications;
-        profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);*/
         return root;
     }
 
