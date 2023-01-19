@@ -19,7 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.imageview.ShapeableImageView;
+
 import es.upm.etsiinf.dam.coinapp.R;
+import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.databinding.ContentMagicBinding;
 import es.upm.etsiinf.dam.coinapp.databinding.FragmentMagicBinding;
 
@@ -32,6 +35,7 @@ public class MagicFragment extends Fragment {
     private BallView viewBall;
     private Context context;
     private MagicViewModel magicViewModel;
+    private CoinDB coinDB;
 
     @Override
     public void onCreate (@Nullable Bundle savedInstanceState) {
@@ -39,6 +43,7 @@ public class MagicFragment extends Fragment {
         context = requireActivity();
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        coinDB = new CoinDB(requireActivity());
 
     }
 
@@ -60,6 +65,11 @@ public class MagicFragment extends Fragment {
         magicViewModel = factory.create(MagicViewModel.class);
 
         contentBinding.getRoot().setVisibility(View.INVISIBLE);
+
+        int numCoinsInDB = coinDB.getNumOfRecords();
+        Random
+        ShapeableImageView coin_siv = contentBinding.ivCircleMagicCoin;
+
 
 
         if(viewBall.getVisibility() != View.INVISIBLE){

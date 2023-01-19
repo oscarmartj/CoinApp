@@ -55,5 +55,14 @@ public class User {
     public void setProfileImage (byte[] profileImage) {
         this.profileImage = profileImage;
     }
+
+    @Override
+    public String toString () {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
 

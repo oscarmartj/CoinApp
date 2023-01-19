@@ -41,8 +41,10 @@ import es.upm.etsiinf.dam.coinapp.main.MainActivity;
 import es.upm.etsiinf.dam.coinapp.main.ui.profile.edit.EditActivity;
 import es.upm.etsiinf.dam.coinapp.main.ui.profile.edit.EditPasswordActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
+import es.upm.etsiinf.dam.coinapp.ui.login.LoginActivity;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
+import es.upm.etsiinf.dam.coinapp.utils.Usernames;
 
 public class ProfileFragment extends Fragment {
 
@@ -122,6 +124,17 @@ public class ProfileFragment extends Fragment {
                 intent.putExtra("email",email.getText().toString());
                 intent.putExtra("imageProfile",imageProfile);
                 launcher.launch(intent);
+            }
+        });
+
+        Button btn_logout = binding.includeContentProfile.btnLogoutProfile;
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view) {
+                Usernames.logout(context);
+                Intent backToLogin = new Intent(context, LoginActivity.class);
+                startActivity(backToLogin);
+                Toast.makeText(context, "Bye "+Usernames.firstToUppercase(user.getText().toString())+" !", Toast.LENGTH_SHORT).show();
             }
         });
 

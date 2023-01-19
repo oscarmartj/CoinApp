@@ -51,7 +51,7 @@ public class UserDB {
         return rowId != -1;
     }
 
-    public void updateUser(User user) {
+    public void updateUser(User user, String last_email) {
         // Obtiene la base de datos en modo escritura
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -62,7 +62,7 @@ public class UserDB {
         values.put(COLUMN_PROFILEIMAGE, user.getProfileImage());
 
         // Actualiza el registro de la tabla de usuarios con el email especificado
-        db.update(TABLE_NAME_USERS, values, COLUMN_EMAIL + "= ?", new String[] { user.getEmail() });
+        db.update(TABLE_NAME_USERS, values, COLUMN_EMAIL + "= ?", new String[] { last_email });
         db.close();
     }
 

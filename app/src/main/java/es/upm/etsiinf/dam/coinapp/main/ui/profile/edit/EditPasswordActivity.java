@@ -128,6 +128,25 @@ public class EditPasswordActivity extends AppCompatActivity {
                     }
                 }
 
+                if(new_password_confirmation_layout.getError() != null){
+                    String newPasswordConfirmation = new_password_confirmation.getText().toString();
+                    //Si la contraseña es inferior a 5 caracters
+                    if(newPasswordConfirmation.length()<5){
+                        new_password_confirmation_layout.setError("Minimum 5 characters.");
+
+                        //Si la contraseña es mayor o igual a 5 caracters pero no coincide con la new password
+                    }else if(new_password.getText().toString().length()>20){
+                        new_password_confirmation_layout.setError("Max. 20 characters.");
+                    }else if(new_password.getText() !=null
+                            && new_password.getText().length()>=5
+                            && !new_password_confirmation.getText().toString().equals(new_password.getText().toString())
+                            && newPasswordConfirmation.length()>=5
+                    ){
+                        new_password_confirmation_layout.setError("It does not match with the new password.");
+                    }else{
+                        new_password_confirmation_layout.setError(null);
+                    }
+                }
 
                 String newPassword = new_password.getText().toString();
                 //Si la contraseña es inferior a 5 caracters
@@ -163,12 +182,33 @@ public class EditPasswordActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged (Editable editable) {
+
+                if(new_password_layout.getError() != null){
+                    if(new_password.getText().toString().length()<5){
+                        new_password_layout.setError("Min. 5 characters.");
+
+                        //Si la contraseña es mayor o igual a 5 caracters pero no coincide con la confirmation
+                    }else if(new_password.getText().toString().length()>20){
+                        new_password_layout.setError("Max. 20 characters.");
+                    }else if(new_password_confirmation.getText() !=null
+                            && new_password_confirmation.getText().length()>=5
+                            && !new_password_confirmation.getText().toString().equals(new_password.getText().toString())
+                            && new_password.getText().toString().length()>=5
+                    ){
+                        new_password_layout.setError("It does not match with the password confirmation.");
+                    }else{
+                        new_password_layout.setError(null);
+                    }
+                }
+
                 String newPasswordConfirmation = new_password_confirmation.getText().toString();
                 //Si la contraseña es inferior a 5 caracters
                 if(newPasswordConfirmation.length()<5){
                     new_password_confirmation_layout.setError("Minimum 5 characters.");
 
                     //Si la contraseña es mayor o igual a 5 caracters pero no coincide con la new password
+                }else if(new_password.getText().toString().length()>20){
+                    new_password_confirmation_layout.setError("Max. 20 characters.");
                 }else if(new_password.getText() !=null
                         && new_password.getText().length()>=5
                         && !new_password_confirmation.getText().toString().equals(new_password.getText().toString())

@@ -354,7 +354,9 @@ public class EditActivity extends AppCompatActivity {
                         }else{
                             user_to_db = new User(usuarioFinal,emailFinal,im.getBytesFromBitmap(im.getBitmapFromDrawable(imageProfile)));
                         }
-                        userDB.updateUser(user_to_db);
+                        
+                        String last_email = getIntent().getStringExtra("email");
+                        userDB.updateUser(user_to_db,last_email);
                         //Actualizar sharedPreferences
                         Usernames.updateUserPreferences(EditActivity.this,user_to_db);
                         profileViewModel.setChanges(user_to_db);
