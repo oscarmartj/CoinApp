@@ -18,6 +18,12 @@ public class User {
         this.email = email;
     }
 
+    public User(String username, String email, byte[] profileImage) {
+        this.username = username;
+        this.email = email;
+        this.profileImage = profileImage;
+    }
+
     public String getUsername() {
         return username;
     }

@@ -51,16 +51,18 @@ public class UserDB {
         return rowId != -1;
     }
 
-    public void updateProfileImage(String email, byte[] image) {
+    public void updateUser(User user) {
         // Obtiene la base de datos en modo escritura
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Crea un nuevo mapa de valores donde se almacenará la imagen
         ContentValues values = new ContentValues();
-        values.put(COLUMN_PROFILEIMAGE, image);
+        values.put(COLUMN_USERNAME,user.getUsername());
+        values.put(COLUMN_EMAIL,user.getEmail());
+        values.put(COLUMN_PROFILEIMAGE, user.getProfileImage());
 
         // Actualiza el registro de la tabla de usuarios con el email especificado
-        db.update(TABLE_NAME_USERS, values, COLUMN_EMAIL + "= ?", new String[] { email });
+        db.update(TABLE_NAME_USERS, values, COLUMN_EMAIL + "= ?", new String[] { user.getEmail() });
         db.close();
     }
 

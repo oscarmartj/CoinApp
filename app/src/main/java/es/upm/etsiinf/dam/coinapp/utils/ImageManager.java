@@ -1,6 +1,9 @@
 package es.upm.etsiinf.dam.coinapp.utils;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,7 +13,14 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import android.graphics.Bitmap;
+import android.graphics.PointF;
+import android.media.FaceDetector;
+import android.media.FaceDetector.Face;
+
 
 import androidx.core.content.ContextCompat;
 
@@ -182,6 +192,75 @@ public class ImageManager {
         }
         return imagePath;
     }
+
+    public Bitmap compressImageFromGallery(Bitmap bitmap){
+        bitmap = Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        if(byteArray.length > 500000){
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);
+            byteArray = byteArrayOutputStream.toByteArray();
+        }
+        /*
+        while (byteArray.length > 500000) { //500KB
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+            byteArray = byteArrayOutputStream.toByteArray();
+        }*/
+
+        return getBitmapFromBLOB(byteArray);
+    }
+
+    public Bitmap zoomFace(Bitmap originalBitmap) {
+        originalBitmap = compressImageFromGallery(originalBitmap);
+        int width = originalBitmap.getWidth();
+        int height = originalBitmap.getHeight();
+        int maxFaces = 5;//valor arbitrario
+
+        FaceDetector detector = new FaceDetector(width, height, maxFaces);
+        FaceDetector.Face[] faces = new Face[maxFaces];
+        int facesDetected = detector.findFaces(originalBitmap, faces);
+
+        PointF midPoint = new PointF();
+        if (facesDetected > 0) {
+            // Obtener la cara principal
+            Face biggestFace = null;
+            float biggestFaceSize = 0;
+            for (int i = 0; i < facesDetected; i++) {
+                Face face = faces[i];
+                float eyeDistance = face.eyesDistance();
+                float faceSize = (int) (eyeDistance * 4) * (int) (eyeDistance * 4);
+                if (biggestFace == null || faceSize > biggestFaceSize) {
+                    biggestFace = face;
+                    biggestFaceSize = faceSize;
+                }
+            }
+            float eyeDistance = biggestFace.eyesDistance();
+
+            // Obtener la posición y tamaño de la cara
+            biggestFace.getMidPoint(midPoint);
+            int faceX = (int) (midPoint.x - (eyeDistance * 2));
+            int faceY = (int) (midPoint.y - (eyeDistance * 2));
+            int faceWidth = (int) (eyeDistance * 4);
+            int faceHeight = (int) (eyeDistance * 4);
+
+            // Hacer zoom sobre la cara
+            Bitmap faceBitmap = Bitmap.createBitmap(originalBitmap, faceX, faceY, faceWidth, faceHeight);
+
+            // Escalar la imagen
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(faceBitmap, 300, 300, false);
+            return scaledBitmap;
+        } else {
+            // Escalar la imagen
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 300, 300, false);
+            return scaledBitmap;
+        }
+    }
+
+
 }
 
 

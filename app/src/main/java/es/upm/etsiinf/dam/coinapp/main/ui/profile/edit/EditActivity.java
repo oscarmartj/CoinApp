@@ -1,26 +1,35 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.profile.edit;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStore;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.Manifest;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,9 +44,12 @@ import java.io.IOException;
 
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.functions.UserDB;
-import es.upm.etsiinf.dam.coinapp.databinding.ActivityEditBinding;
+import es.upm.etsiinf.dam.coinapp.main.ui.profile.ProfileViewModel;
+import es.upm.etsiinf.dam.coinapp.main.ui.profile.ProfileViewModelFactory;
+import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
+import es.upm.etsiinf.dam.coinapp.utils.Usernames;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -48,12 +60,24 @@ public class EditActivity extends AppCompatActivity {
     private Drawable imageFinal;
     private ImageManager im;
 
+    private ActivityResultLauncher<Intent> launcher;
+    private ActivityResultLauncher<Intent> launcherCamera;
+
+    private Uri cam_uri;
+    private boolean changePhoto=false;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
-        ImageManager imageManager = new ImageManager();
+        im = new ImageManager();
         userDB = new UserDB(this);
+
+        setFlagNoEdit(false); //de inicio la foto no esta cambiada
+
+        Context contextapp = getApplicationContext();
+        SharedPreferences sp = this.getSharedPreferences("login_preferences", Context.MODE_PRIVATE);
+        ProfileViewModel profileViewModel = new ViewModelProvider(this,new ProfileViewModelFactory(contextapp,sp)).get(ProfileViewModel.class);
 
         TextInputEditText user = findViewById(R.id.tiet_user_edit);
         TextInputEditText email = findViewById(R.id.tiet_email_edit);
@@ -62,11 +86,9 @@ public class EditActivity extends AppCompatActivity {
 
         ShapeableImageView ip_profile = findViewById(R.id.iv_circle_profile_edit);
 
-        String userText = getIntent().getStringExtra("username");
-        usuarioFinal = userText;
-        String emailText = getIntent().getStringExtra("email");
-        emailFinal = emailText;
-        Drawable imageProfile = imageManager.getDrawableFromByte(getIntent().getByteArrayExtra("imageProfile"));
+        usuarioFinal = getIntent().getStringExtra("username");
+        emailFinal = getIntent().getStringExtra("email");
+        Drawable imageProfile = im.getDrawableFromByte(getIntent().getByteArrayExtra("imageProfile"));
 
         im = new ImageManager();
         File imageEditable = im.profileImageWithFilter(this,im.getBitmapFromDrawable(imageProfile),usuarioFinal);
@@ -81,6 +103,79 @@ public class EditActivity extends AppCompatActivity {
         user.setText(usuarioFinal);
         email.setText(emailFinal);
         ip_profile.setImageDrawable(imageFinal);
+
+        //RESULTS FOR CHOOSING AND TAKE PHOTO
+
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                Uri selectedImageUri = result.getData().getData();
+                Bitmap selectedImageBitmap = null;
+                try {
+                    selectedImageBitmap
+                            = MediaStore.Images.Media.getBitmap(
+                            this.getContentResolver(),
+                            selectedImageUri);
+                    selectedImageBitmap = im.zoomFace(selectedImageBitmap);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }finally{
+                    if(selectedImageBitmap != null){
+                        try {
+                            imageFinal = im.getDrawableFromByte(im.getBytesFromBitmap(selectedImageBitmap));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    try {
+
+                        setFlagNoEdit(true);
+                        ip_profile.setImageDrawable(im.getDrawableFromByte(
+                                im.getBytesFromBitmap(
+                                        BitmapFactory.decodeFile(
+                                                im.profileImageWithFilter(
+                                                        EditActivity.this,selectedImageBitmap,usuarioFinal)
+                                                        .getAbsolutePath()))));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        launcherCamera = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            Log.i("CameraLauncher","entra aqui -1");
+            if (result.getResultCode() == RESULT_OK) {
+                Log.i("CameraLauncher","entra aqui");
+                Bitmap selectedImageBitmap = null;
+                try {
+                    selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), cam_uri);
+                    selectedImageBitmap = im.zoomFace(selectedImageBitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+                    if(selectedImageBitmap != null){
+                        try {
+                            imageFinal = im.getDrawableFromByte(im.getBytesFromBitmap(selectedImageBitmap));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    try {
+                        setFlagNoEdit(true);
+                        ip_profile.setImageDrawable(im.getDrawableFromByte(
+                                im.getBytesFromBitmap(
+                                        BitmapFactory.decodeFile(
+                                                im.profileImageWithFilter(
+                                                                EditActivity.this,selectedImageBitmap,usuarioFinal)
+                                                        .getAbsolutePath()))));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        });
 
 
         user.addTextChangedListener(new TextWatcher() {
@@ -100,7 +195,7 @@ public class EditActivity extends AppCompatActivity {
                     //Si existe el nombre de usuario y tiene un correo diferente al mio => error, ya existe user
                     //Si existe el nombre de usuario y tiene el mismo correo que yo => ok, modifico mi propio nombre
                     if(userDB.countUsersByUsername(user.getText().toString())>0 &&
-                            !userDB.getUserByUsername(user.getText().toString()).getEmail().equals(emailFinal)
+                            !userDB.getUserByUsername(user.getText().toString()).getEmail().equals(getIntent().getStringExtra("email"))
 
                     ){
                         user_layout.setError("Already exist user with this username");
@@ -134,7 +229,7 @@ public class EditActivity extends AppCompatActivity {
             public void afterTextChanged (Editable editable) {
                 if(DataManager.isEmailValid(email.getText().toString())){
                     if(userDB.countUsersByEmail(email.getText().toString())>0 &&
-                            !userDB.getUserByEmail(email.getText().toString()).getUsername().equals(usuarioFinal)
+                            !userDB.getUserByEmail(email.getText().toString()).getUsername().equals(getIntent().getStringExtra("username"))
                     ){
                         email_layout.setError("Already exist user with this email");
                     }else{
@@ -148,81 +243,75 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        //
-        ip_profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View view) {
-                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(EditActivity.this);
-                View view_bsd = getLayoutInflater().inflate(R.layout.content_dialog_change_photo, null);
-                bottomSheetDialog.setContentView(view_bsd);
-                bottomSheetDialog.show();
 
-                ListView listView = view_bsd.findViewById(R.id.lw_choosephoto);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick (AdapterView<?> adapterView, View view, int i, long l) {
-                        if(i == 0){
-                            if (ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                                //ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.CAMERA }, DataManager.CAMERA_PERMISSION_REQUEST_CODE);
-                                //PERMISO DENEGADO
-                                if(ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this, Manifest.permission.CAMERA)){
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
-                                    builder.setTitle("Camera permissions")
-                                            .setMessage("Do you want to activate camera permissions to be able to take a photo for your profile?")
-                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.CAMERA }, DataManager.CAMERA_PERMISSION_REQUEST_CODE);
-                                                }
-                                            })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick (DialogInterface dialogInterface, int i) {
+        ip_profile.setOnClickListener(view -> {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(EditActivity.this);
+            View view_bsd = getLayoutInflater().inflate(R.layout.content_dialog_change_photo, null);
+            bottomSheetDialog.setContentView(view_bsd);
+            bottomSheetDialog.show();
 
-                                                }
-                                            });
-                                    builder.create().show();
-                                }else{
-                                    ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.CAMERA }, DataManager.CAMERA_PERMISSION_REQUEST_CODE);
-                                }
+            ListView listView = view_bsd.findViewById(R.id.lw_choosephoto);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick (AdapterView<?> adapterView, View view, int i, long l) {
+                    if(i == 0){
+                        if (ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            if(ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this, Manifest.permission.CAMERA)){
+                                AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
+                                builder.setTitle("Camera permissions")
+                                        .setMessage("Do you want to activate camera permissions to be able to take a photo for your profile?")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.CAMERA }, DataManager.CAMERA_PERMISSION_REQUEST_CODE);
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick (DialogInterface dialogInterface, int i) {
+
+                                            }
+                                        });
+                                builder.create().show();
                             }else{
-                                takePhoto();
+                                ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.CAMERA }, DataManager.CAMERA_PERMISSION_REQUEST_CODE);
                             }
-
-                           bottomSheetDialog.dismiss();
                         }else{
-                            if (ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                //PERMISO DENEGADO
-                                if(ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)){
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
-                                    builder.setTitle("Gallery permissions")
-                                            .setMessage("Would you like to grant access to your gallery to choose a photo for your profile?")
-                                            .setPositiveButton("Go to app info", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, DataManager.READ_EXTERNAL_STORAGE_REQUEST_CODE);
-                                                }
-                                            })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick (DialogInterface dialogInterface, int i) {
-
-                                                }
-                                            });
-                                    builder.create().show();
-                                }else{
-                                    ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, DataManager.READ_EXTERNAL_STORAGE_REQUEST_CODE);
-                                }
-                            }else{
-                                chooseExisting();
-                            }
-                            bottomSheetDialog.dismiss();
+                            takePhoto(launcherCamera);
                         }
+
+                       bottomSheetDialog.dismiss();
+                    }else{
+                        if (ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            if(ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)){
+                                AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
+                                builder.setTitle("Gallery permissions")
+                                        .setMessage("Would you like to grant access to your gallery to choose a photo for your profile?")
+                                        .setPositiveButton("Go to app info", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, DataManager.READ_EXTERNAL_STORAGE_REQUEST_CODE);
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick (DialogInterface dialogInterface, int i) {
+
+                                            }
+                                        });
+                                builder.create().show();
+                            }else{
+                                ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, DataManager.READ_EXTERNAL_STORAGE_REQUEST_CODE);
+                            }
+                        }else{
+                           chooseExisting(launcher);
+                        }
+                        bottomSheetDialog.dismiss();
                     }
-                });
+                }
+            });
 
 
-            }
         });
 
 
@@ -230,25 +319,65 @@ public class EditActivity extends AppCompatActivity {
         MaterialToolbar toolbar = findViewById(R.id.topAppBar_editprofile);
 
         toolbar.setNavigationOnClickListener(view -> {
+            setFlagNoEdit(false);
+            Intent resultIntent = new Intent();
+            try {
+                resultIntent.putExtra("imageProfileNoEdit",im.getBytesFromBitmap(im.getBitmapFromDrawable(imageProfile)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            setResult(RESULT_CANCELED,resultIntent);
             finish();
         });
 
         toolbar.setOnMenuItemClickListener(menuItem -> {
             if(menuItem.getItemId() == R.id.editprofile_menu_option) {
-                Toast.makeText(this, " Icon Clicked", Toast.LENGTH_SHORT).show();
+                Log.i("ClickSave","here");
+                if(user_layout.getError() != null || email_layout.getError() != null){
+                    Toast.makeText(this, "Changes could not be saved.", Toast.LENGTH_SHORT).show();
+                    setFlagNoEdit(false);
+                    Intent resultIntent = new Intent();
+                    try {
+                        resultIntent.putExtra("imageProfileNoEdit",im.getBytesFromBitmap(im.getBitmapFromDrawable(imageProfile)));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    setResult(RESULT_CANCELED,resultIntent);
+                    finish();
+                }else{
+                    User user_to_db;
+                    try {
+                        //si ha cambiado la foto, mete la nuevai imagen
+                        if(DataManager.getFlagNoEdit(this)){
+                            user_to_db = new User(usuarioFinal,emailFinal,im.getBytesFromBitmap(im.getBitmapFromDrawable(imageFinal)));
+                        //si no ha cambiado la foto, mete la antigua imagen sin el filtro gris ni el simbolo de la camara
+                        }else{
+                            user_to_db = new User(usuarioFinal,emailFinal,im.getBytesFromBitmap(im.getBitmapFromDrawable(imageProfile)));
+                        }
+                        userDB.updateUser(user_to_db);
+                        //Actualizar sharedPreferences
+                        Usernames.updateUserPreferences(EditActivity.this,user_to_db);
+                        profileViewModel.setChanges(user_to_db);
+
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("username",user_to_db.getUsername());
+                        resultIntent.putExtra("email",user_to_db.getEmail());
+                        resultIntent.putExtra("imageProfile",user_to_db.getProfileImage());
+                        resultIntent.putExtra("imageProfileNoEdit",im.getBytesFromBitmap(im.getBitmapFromDrawable(imageProfile)));
+                        Toast.makeText(this, "Changes saved.", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 return true;
             }
             return false;
         });
     }
 
-    private void takePhoto(){
-        Toast.makeText(this, " option 0", Toast.LENGTH_SHORT).show();
-    }
 
-    private void chooseExisting(){
-        Toast.makeText(this, " option 1", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void onRequestPermissionsResult (int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -256,7 +385,7 @@ public class EditActivity extends AppCompatActivity {
         switch (requestCode) {
             case DataManager.CAMERA_PERMISSION_REQUEST_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    takePhoto();
+                    takePhoto(launcherCamera);
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
                     builder.setTitle("Camera permissions")
@@ -282,7 +411,7 @@ public class EditActivity extends AppCompatActivity {
                 break;
             case DataManager.READ_EXTERNAL_STORAGE_REQUEST_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    chooseExisting();
+                    chooseExisting(launcher);
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
                     builder.setTitle("Gallery permissions")
@@ -308,4 +437,32 @@ public class EditActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    private void takePhoto(ActivityResultLauncher<Intent> launcher){
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, usuarioFinal+"_CoinAppProfile");
+        cam_uri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, cam_uri);
+
+        launcher.launch(takePictureIntent);
+
+    }
+
+    private void chooseExisting (ActivityResultLauncher<Intent> launcher){
+
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_PICK);
+        launcher.launch(i);
+
+    }
+
+    private void setFlagNoEdit (boolean flag) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences("PHOTO_NO_EDIT",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("flag",flag);
+        editor.apply();
+    }
+
 }
