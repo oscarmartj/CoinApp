@@ -1,17 +1,30 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.profile.edit;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.io.File;
+import java.io.IOException;
 
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.functions.UserDB;
@@ -21,12 +34,12 @@ import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 
 public class EditActivity extends AppCompatActivity {
 
-    private ActivityEditBinding binding;
     private UserDB userDB;
 
     private String usuarioFinal;
     private String emailFinal;
     private Drawable imageFinal;
+    private ImageManager im;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -47,7 +60,16 @@ public class EditActivity extends AppCompatActivity {
         String emailText = getIntent().getStringExtra("email");
         emailFinal = emailText;
         Drawable imageProfile = imageManager.getDrawableFromByte(getIntent().getByteArrayExtra("imageProfile"));
-        imageFinal = imageProfile;
+
+        im = new ImageManager();
+        File imageEditable = im.profileImageWithFilter(this,im.getBitmapFromDrawable(imageProfile),usuarioFinal);
+        Drawable imageToInsert = null;
+        try {
+            imageToInsert = im.getDrawableFromByte(im.getBytesFromBitmap(BitmapFactory.decodeFile(imageEditable.getAbsolutePath())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        imageFinal = imageToInsert;
 
         user.setText(usuarioFinal);
         email.setText(emailFinal);
@@ -68,7 +90,18 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged (Editable editable) {
                 if(DataManager.isUserNameValid(user.getText().toString())){
-                    usuarioFinal = user.getText().toString();
+                    //Si existe el nombre de usuario y tiene un correo diferente al mio => error, ya existe user
+                    //Si existe el nombre de usuario y tiene el mismo correo que yo => ok, modifico mi propio nombre
+                    if(userDB.countUsersByUsername(user.getText().toString())>0 &&
+                            !userDB.getUserByUsername(user.getText().toString()).getEmail().equals(emailFinal)
+
+                    ){
+                        user_layout.setError("Already exist user with this username");
+
+                    }else{
+                        user_layout.setError(null);
+                        usuarioFinal=user.getText().toString();
+                    }
                 }else{
                     if(user.getText().toString().length()<3){
                         user_layout.setError("Minimum 3 characters.");
@@ -93,14 +126,48 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged (Editable editable) {
                 if(DataManager.isEmailValid(email.getText().toString())){
-                    if(userDB.countUsersByEmail(email.getText().toString())>0){
+                    if(userDB.countUsersByEmail(email.getText().toString())>0 &&
+                            !userDB.getUserByEmail(email.getText().toString()).getUsername().equals(usuarioFinal)
+                    ){
                         email_layout.setError("Already exist user with this email");
                     }else{
+                        email_layout.setError(null);
                         emailFinal=email.getText().toString();
                     }
                 }else{
                     email_layout.setError("Invalid email format.");
                 }
+
+            }
+        });
+
+        //
+        ip_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view) {
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(EditActivity.this);
+                View view_bsd = getLayoutInflater().inflate(R.layout.content_dialog_change_photo, null);
+                bottomSheetDialog.setContentView(view_bsd);
+                bottomSheetDialog.show();
+
+                ListView listView = view_bsd.findViewById(R.id.lw_choosephoto);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick (AdapterView<?> adapterView, View view, int i, long l) {
+                        if(i == 0){
+                           if(ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.CAMERA))
+                               !=PackageManager.PERMISSION_GRANTED){
+
+                            }
+                           takePhoto();
+                           bottomSheetDialog.dismiss();
+                        }else{
+                            chooseExisting();
+                            bottomSheetDialog.dismiss();
+                        }
+                    }
+                });
+
 
             }
         });
@@ -120,5 +187,13 @@ public class EditActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    private void takePhoto(){
+        Toast.makeText(this, " option 0", Toast.LENGTH_SHORT).show();
+    }
+
+    private void chooseExisting(){
+        Toast.makeText(this, " option 1", Toast.LENGTH_SHORT).show();
     }
 }

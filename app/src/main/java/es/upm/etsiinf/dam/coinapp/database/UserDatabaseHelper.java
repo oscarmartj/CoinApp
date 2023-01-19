@@ -24,6 +24,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME_USERS = "users";
 
     // Columnas de la tabla de usuarios
+    public static final String COLUMN_ID ="id";
     public static final String COLUMN_USERNAME = "username";
     public static final String COLUMN_PASSWORD = "password";
     public static final String COLUMN_EMAIL = "email";
@@ -32,7 +33,8 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     // Sentencia SQL para crear la tabla de usuarios
     private static final String SQL_CREATE_TABLE_USERS =
             "CREATE TABLE " + TABLE_NAME_USERS + "(" +
-                    COLUMN_USERNAME + " TEXT PRIMARY KEY," +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    COLUMN_USERNAME + " TEXT UNIQUE," +
                     COLUMN_PASSWORD + " TEXT," +
                     COLUMN_EMAIL + " TEXT UNIQUE," +
                     COLUMN_PROFILEIMAGE + " BLOB" + ")";

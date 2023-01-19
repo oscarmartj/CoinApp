@@ -2,4 +2,8 @@
 <resources>
     <string name="recordar_inicio_de_sesi_n">Recordar inicio de sesión</string>
     <string name="iniciar_sesion_tras_registro">¡Se ha registrado correctamente! Inicie sesión ahora</string>
+    <string-array name="photo_options">
+        <item>Take photo</item>
+        <item>Choose existing photo</item>
+    </string-array>
 </resources>

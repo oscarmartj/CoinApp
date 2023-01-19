@@ -76,10 +76,33 @@ public class UserDB {
                 Cursor cursor = db.rawQuery(query, selectionArgs)
         ) {
             if (cursor.moveToFirst()) {
-                String username = cursor.getString(0);
-                String password = cursor.getString(1);
-                byte[] profileImage = cursor.getBlob(3);
+                String username = cursor.getString(1);
+                String password = cursor.getString(2);
+                byte[] profileImage = cursor.getBlob(4);
                 user = new User(username, password, email, profileImage);
+            }
+        } catch (Exception e) {
+            Log.e("UserDatabaseHelper", "Error al obtener usuario por email", e);
+        }
+        return user;
+    }
+
+    public User getUserByUsername(String username) {
+        User user = null;
+
+        String query = "SELECT * FROM " + TABLE_NAME_USERS + " WHERE " + COLUMN_USERNAME + " = ?";
+        String[] selectionArgs = {username};
+
+        try (
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                Cursor cursor = db.rawQuery(query, selectionArgs)
+        ) {
+            if (cursor.moveToFirst()) {
+                String usernameto = cursor.getString(1);
+                String password = cursor.getString(2);
+                String email = cursor.getString(3);
+                byte[] profileImage = cursor.getBlob(4);
+                user = new User(usernameto, password, email, profileImage);
             }
         } catch (Exception e) {
             Log.e("UserDatabaseHelper", "Error al obtener usuario por email", e);
@@ -91,6 +114,22 @@ public class UserDB {
         int count = 0;
         String query = "SELECT COUNT(*) FROM " + TABLE_NAME_USERS + " WHERE " + COLUMN_EMAIL + " = ?";
         String[] selectionArgs = {email};
+
+        try (
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                Cursor cursor = db.rawQuery(query, selectionArgs)
+        ) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        }
+        return count;
+    }
+
+    public int countUsersByUsername(String username) {
+        int count = 0;
+        String query = "SELECT COUNT(*) FROM " + TABLE_NAME_USERS + " WHERE " + COLUMN_USERNAME + " = ?";
+        String[] selectionArgs = {username};
 
         try (
                 SQLiteDatabase db = dbHelper.getReadableDatabase();

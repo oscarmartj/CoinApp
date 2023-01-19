@@ -32,6 +32,8 @@ import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 public class DataManager {
 
+    public static int CAMERA_PERMISSION_REQUEST_CODE=1;
+
     public static void setSuccesfullTime(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -289,7 +291,7 @@ public class DataManager {
         if(email.contains("@")) {
             return Patterns.EMAIL_ADDRESS.matcher(email).matches();
         } else {
-            return !email.trim().isEmpty();
+            return false;
         }
     }
 
