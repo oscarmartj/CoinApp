@@ -33,4 +33,18 @@
     <style name="Theme.CoinApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.CoinApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="MyAlertDialog" parent="Theme.AppCompat.DayNight.Dialog">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButton</item>
+    </style>
+
+    <style name="NegativeButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="PositiveButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>

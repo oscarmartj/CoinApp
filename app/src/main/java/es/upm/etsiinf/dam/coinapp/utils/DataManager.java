@@ -32,7 +32,8 @@ import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 public class DataManager {
 
-    public static int CAMERA_PERMISSION_REQUEST_CODE=1;
+    public static final int CAMERA_PERMISSION_REQUEST_CODE=1;
+    public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE=2;
 
     public static void setSuccesfullTime(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work",MODE_PRIVATE);

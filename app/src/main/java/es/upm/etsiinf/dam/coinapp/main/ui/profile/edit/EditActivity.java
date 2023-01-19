@@ -1,13 +1,20 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.profile.edit;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -155,14 +162,60 @@ public class EditActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick (AdapterView<?> adapterView, View view, int i, long l) {
                         if(i == 0){
-                           if(ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.CAMERA))
-                               !=PackageManager.PERMISSION_GRANTED){
+                            if (ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                //ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.CAMERA }, DataManager.CAMERA_PERMISSION_REQUEST_CODE);
+                                //PERMISO DENEGADO
+                                if(ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this, Manifest.permission.CAMERA)){
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
+                                    builder.setTitle("Camera permissions")
+                                            .setMessage("Do you want to activate camera permissions to be able to take a photo for your profile?")
+                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.CAMERA }, DataManager.CAMERA_PERMISSION_REQUEST_CODE);
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick (DialogInterface dialogInterface, int i) {
 
+                                                }
+                                            });
+                                    builder.create().show();
+                                }else{
+                                    ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.CAMERA }, DataManager.CAMERA_PERMISSION_REQUEST_CODE);
+                                }
+                            }else{
+                                takePhoto();
                             }
-                           takePhoto();
+
                            bottomSheetDialog.dismiss();
                         }else{
-                            chooseExisting();
+                            if (ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                //PERMISO DENEGADO
+                                if(ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)){
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
+                                    builder.setTitle("Gallery permissions")
+                                            .setMessage("Would you like to grant access to your gallery to choose a photo for your profile?")
+                                            .setPositiveButton("Go to app info", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, DataManager.READ_EXTERNAL_STORAGE_REQUEST_CODE);
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick (DialogInterface dialogInterface, int i) {
+
+                                                }
+                                            });
+                                    builder.create().show();
+                                }else{
+                                    ActivityCompat.requestPermissions(EditActivity.this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, DataManager.READ_EXTERNAL_STORAGE_REQUEST_CODE);
+                                }
+                            }else{
+                                chooseExisting();
+                            }
                             bottomSheetDialog.dismiss();
                         }
                     }
@@ -195,5 +248,64 @@ public class EditActivity extends AppCompatActivity {
 
     private void chooseExisting(){
         Toast.makeText(this, " option 1", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case DataManager.CAMERA_PERMISSION_REQUEST_CODE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    takePhoto();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
+                    builder.setTitle("Camera permissions")
+                            .setMessage("Do you want to activate camera permissions to be able to take a photo for your profile?")
+                            .setPositiveButton("Go to app info", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent intent = new Intent();
+                                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                    intent.setData(uri);
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick (DialogInterface dialogInterface, int i) {
+                                    Toast.makeText(EditActivity.this, "Permission denied, you can't take a photo.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    builder.create().show();
+                }
+                break;
+            case DataManager.READ_EXTERNAL_STORAGE_REQUEST_CODE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    chooseExisting();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this, R.style.MyAlertDialog);
+                    builder.setTitle("Gallery permissions")
+                            .setMessage("Would you like to grant access to your gallery to choose a photo for your profile?")
+                            .setPositiveButton("Go to app info", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent intent = new Intent();
+                                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                    intent.setData(uri);
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick (DialogInterface dialogInterface, int i) {
+                                    Toast.makeText(EditActivity.this, "Permission denied, you can't choose a photo from gallery.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    builder.create().show();
+                }
+                break;
+        }
     }
 }
