@@ -5,6 +5,6 @@
     <item
         android:id="@+id/edit_menu_option"
         android:title="Save"
-        android:contentDescription="Save edit profile"
+        android:contentDescription="Save change password"
         app:showAsAction="ifRoom" />
 </menu>

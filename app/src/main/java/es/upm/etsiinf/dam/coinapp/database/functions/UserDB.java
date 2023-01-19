@@ -66,6 +66,19 @@ public class UserDB {
         db.close();
     }
 
+    public void updatePassword(User user) {
+        // Obtiene la base de datos en modo escritura
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Crea un nuevo mapa de valores donde se almacenará la imagen
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PASSWORD,user.getPassword());
+
+        // Actualiza el registro de la tabla de usuarios con el email especificado
+        db.update(TABLE_NAME_USERS, values, COLUMN_EMAIL + "= ?", new String[] { user.getEmail() });
+        db.close();
+    }
+
 
     public User getUserByEmail(String email) {
         User user = null;

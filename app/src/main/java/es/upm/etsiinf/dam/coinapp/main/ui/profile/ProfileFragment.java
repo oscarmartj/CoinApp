@@ -62,13 +62,6 @@ public class ProfileFragment extends Fragment {
 
 
         TextView changePassword = binding.includeContentProfile.twChangepassword;
-        changePassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View view) {
-                Intent intent = new Intent(context, EditPasswordActivity.class);
-                startActivity(intent);
-            }
-        });
         TextInputEditText user = binding.includeContentProfile.tietUser;
         TextInputEditText email = binding.includeContentProfile.tietEmail;
         ShapeableImageView shapeableImageView = binding.includeContentProfile.ivCircleProfile;
@@ -83,6 +76,15 @@ public class ProfileFragment extends Fragment {
                 imageProfile = manager.getBytesFromBitmap(manager.getBitmapFromDrawable(image));
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        });
+
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view) {
+                Intent intent = new Intent(context, EditPasswordActivity.class);
+                intent.putExtra("email",email.getText().toString());
+                startActivity(intent);
             }
         });
 
