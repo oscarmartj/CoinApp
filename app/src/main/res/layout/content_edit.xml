@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".main.ui.profile.edit.EditActivity"
+    tools:showIn="@layout/activity_edit">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/iv_circle_profile_edit"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="@dimen/height_between_edittext_profile"
+        android:layout_marginEnd="150dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:srcCompat="@drawable/defaultprofile" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_user_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/height_between_edittext_profile"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:hint="Username"
+        app:endIconMode="clear_text"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_circle_profile_edit"
+        app:startIconDrawable="@drawable/ic_username_black_24dp"
+        app:helperTextEnabled="true"
+        app:helperText="">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tiet_user_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_email_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/height_between_edittext_profile"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:hint="Email"
+        app:endIconMode="clear_text"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_user_edit"
+        app:startIconDrawable="@drawable/ic_email_black_24dp"
+        app:helperTextEnabled="true"
+        app:helperText="">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tiet_email_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

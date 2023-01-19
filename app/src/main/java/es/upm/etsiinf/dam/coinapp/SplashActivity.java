@@ -1,12 +1,20 @@
 package es.upm.etsiinf.dam.coinapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
+import androidx.work.WorkerParameters;
 
 import android.annotation.SuppressLint;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +27,11 @@ import android.net.NetworkRequest;
 import android.os.Bundle;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import es.upm.etsiinf.dam.coinapp.AsyncTask.CoinGeckoThread;
 import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
@@ -36,8 +48,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationScheduleJob;
 import es.upm.etsiinf.dam.coinapp.services.updates.UpdateWorker;
+import es.upm.etsiinf.dam.coinapp.services.updates.job.UpdateScheduleJob;
 import es.upm.etsiinf.dam.coinapp.ui.login.LoginActivity;
+import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.TokenManager;
 
 
@@ -47,12 +62,15 @@ public class SplashActivity extends AppCompatActivity {
     private List<Coin> coins;
     private int splashDuration;
     private SharedPreferences preferences;
+    private long lastSuccesfulWork;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         preferences = getSharedPreferences("user_preferences", MODE_PRIVATE);
+        lastSuccesfulWork = DataManager.getSuccesfullTime(this);
+        Log.i("Work",lastSuccesfulWork+"");
 
         ImageView logoImageView = findViewById(R.id.logo);
         TextView noInternetTW = findViewById(R.id.textview_centrado);
@@ -61,14 +79,33 @@ public class SplashActivity extends AppCompatActivity {
 
         //Si tiene conexión, elimina todas las filas para actualizar la base de datos
         //Si no tiene conexión, no eliminara las filas de la base de datos y se mostraron datos que teniamos desde la última conexión
-        if(isConnected()){
+        if(isConnected()) {
+
             //coinDB.deleteAllCoins();
             //PRIMER TRABAJO
-            WorkRequest downloadWork = new OneTimeWorkRequest.Builder(UpdateWorker.class)
-                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                    .build();
-            WorkManager.getInstance(this).enqueue(downloadWork);
+            long currentTime= System.currentTimeMillis();
+            if(currentTime - lastSuccesfulWork > TimeUnit.HOURS.toMillis(1)){
+                Log.i("UpdateWorker","entra en el if");
+                WorkRequest downloadWork = new OneTimeWorkRequest.Builder(UpdateWorker.class)
+                        .addTag("UpdateWorker")
+                        .build();
+                WorkManager.getInstance(this).beginUniqueWork("UpdateWorker", ExistingWorkPolicy.REPLACE, (OneTimeWorkRequest) downloadWork).enqueue();
+
+            }
+
+            //SEGUNDO TRABAJO Y QUE NO VA A SER INSTANTANEO, SINO PERIODICO Y PERSISTENTE
+
+            JobScheduler jobScheduler = getSystemService(JobScheduler.class);
+            JobInfo jobInfo = jobScheduler.getPendingJob(998);
+            if(jobInfo == null){ //que un nuevo trabajo no reemplace el que ya existe.
+                Log.i("jobInfo","entra aqui:");
+                UpdateScheduleJob job = new UpdateScheduleJob();
+                job.scheduleJob(this);
+            }
+
+
         }
+
 
         //Si no tiene conexión a internet y no tiene datos de las monedas guardados en la base de datos
         if(!isConnected() && !hasData()){

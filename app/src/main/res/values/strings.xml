@@ -117,4 +117,10 @@
     <string name="action_settings">Settings</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_scrolling_edit">ScrollingActivityEdit</string>
+
+    <string-array name="photo_options">
+        <item>Take photo</item>
+        <item>Choose existing photo</item>
+    </string-array>
 </resources>

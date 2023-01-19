@@ -5,7 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +18,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CoinApp"
         tools:targetApi="31">
+        <activity
+            android:name=".main.ui.profile.edit.EditActivity"
+            android:exported="false"
+            android:label="Edit profile"
+            android:noHistory="true"
+            android:theme="@style/Theme.CoinApp.NoActionBar">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".main.ui.profile.edit.EditPasswordActivity"
+            android:exported="true"
+            android:label="Change password"
+            android:noHistory="true"
+            android:theme="@style/Theme.CoinApp.NoActionBar">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
         <activity
             android:name=".main.ui.ranking.singleextended.DetailActivity"
             android:exported="false"
@@ -50,6 +73,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -62,10 +86,14 @@
 
         <service
             android:name=".services.notificaciones.NotificationService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:enabled="true"
             android:exported="true"
-            android:enabled="true"/>
-
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".services.updates.job.UpdateService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

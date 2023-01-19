@@ -2,11 +2,17 @@ package es.upm.etsiinf.dam.coinapp.utils;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.icu.math.BigDecimal;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Patterns;
+
+import androidx.work.impl.WorkDatabase;
+import androidx.work.impl.model.WorkSpec;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +31,22 @@ import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 public class DataManager {
+
+    public static final int CAMERA_PERMISSION_REQUEST_CODE=1;
+    public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE=2;
+
+    public static void setSuccesfullTime(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong("time",System.currentTimeMillis());
+        editor.apply();
+    }
+
+    public static long getSuccesfullTime(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work",MODE_PRIVATE);
+        return sharedPreferences.getLong("time",0);
+
+    }
     public static void saveDatabaseVersion(int version, Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -263,5 +285,23 @@ public class DataManager {
         return -1;
     }
 
+    public static boolean isEmailValid (String email) {
+        if(email == null) {
+            return false;
+        }
+        if(email.contains("@")) {
+            return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isUserNameValid(String username) {
+        if (username == null) {
+            return false;
+        }
+        boolean matches = username.matches("^[a-zA-Z0-9._-]{3,}$");
+        return matches;
+    }
 }
 

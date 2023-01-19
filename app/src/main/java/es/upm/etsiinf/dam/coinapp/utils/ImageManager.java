@@ -1,12 +1,24 @@
 package es.upm.etsiinf.dam.coinapp.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -15,12 +27,22 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import es.upm.etsiinf.dam.coinapp.R;
+
 //Bitmap bitmap1 = imageManager1.getBitmapFromURL();
 public class ImageManager {
 
     public ImageManager () {
     }
 
+    public byte[] getBLOBFromResources(Context context, int resource){
+        Bitmap image = BitmapFactory.decodeResource(context.getResources(), resource);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+        return stream.toByteArray();
+
+    }
 
     public Bitmap getBitmapFromURL (String imageURL) throws IOException {
         URL website = new URL(imageURL);
@@ -45,6 +67,35 @@ public class ImageManager {
         return bitmap;
 
     }
+
+    //https://stackoverflow.com/posts/29091591/revisions
+    public Bitmap getBitmapFromDrawable (Drawable drawable){
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        final int width = !drawable.getBounds().isEmpty() ?
+                drawable.getBounds().width() : drawable.getIntrinsicWidth();
+
+        final int height = !drawable.getBounds().isEmpty() ?
+                drawable.getBounds().height() : drawable.getIntrinsicHeight();
+
+        final Bitmap bitmap = Bitmap.createBitmap(width <= 0 ? 1 : width, height <= 0 ? 1 : height,
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+    public Drawable getDrawableFromByte (byte[] bytes){
+        Bitmap bitmap = getBitmapFromBLOB(bytes);
+        return new BitmapDrawable(bitmap);
+    }
+
+
+
 
     public String getDominantColor2 (Bitmap bitmap) {
         HashMap<Integer, Integer> colorMap = new HashMap<>();
@@ -86,6 +137,50 @@ public class ImageManager {
             }
         }
         return String.format("#%06X", (0xFFFFFF & dominantColor));
+    }
+
+    public File profileImageWithFilter(Context context, Bitmap bitmap, String username){
+
+        Bitmap mutableImage = bitmap.copy(Bitmap.Config.ARGB_8888,true);
+
+        Canvas canvas = new Canvas(mutableImage);
+
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        cm.setScale(0.5f, 0.5f, 0.5f, 1);
+
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(f);
+        canvas.drawBitmap(mutableImage, 0, 0, paint);
+
+        Drawable iconD = ContextCompat.getDrawable(context,R.drawable.ic_camera_white_24dp);
+        Bitmap icon = getBitmapFromDrawable(iconD);
+        canvas.drawBitmap(icon, (mutableImage.getWidth() - icon.getWidth()) / 2, (mutableImage.getHeight() - icon.getHeight()) / 2, null);
+
+        File imageDir = new File(context.getFilesDir(), "images");
+        if(!imageDir.exists()){
+            imageDir.mkdirs();
+        }
+
+        File imagePath = new File(imageDir, username+".jpg");
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(imagePath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        mutableImage.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        try {
+            if(out != null) {
+                out.flush();
+                out.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return imagePath;
     }
 }
 

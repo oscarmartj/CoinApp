@@ -4,7 +4,14 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private byte[] profileImage;
 
+    public User(String username, String password, String email, byte[] profileImage) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.profileImage = profileImage;
+    }
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
@@ -33,6 +40,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public byte[] getProfileImage () {
+        return profileImage;
+    }
+
+    public void setProfileImage (byte[] profileImage) {
+        this.profileImage = profileImage;
     }
 }
 
