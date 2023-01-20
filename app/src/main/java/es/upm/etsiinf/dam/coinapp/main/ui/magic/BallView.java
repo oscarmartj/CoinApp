@@ -10,6 +10,8 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,7 +34,7 @@ public class BallView extends View {
     private int visibleBalls = 0;
     private int notVisibleBalls = 0;
 
-    public BallView(Context context, AttributeSet attrs) {
+    public BallView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -54,6 +56,8 @@ public class BallView extends View {
         mPaint = new Paint();
         moveBalls();
     }
+
+
 
     public int getVisibleBalls () {
         return visibleBalls;

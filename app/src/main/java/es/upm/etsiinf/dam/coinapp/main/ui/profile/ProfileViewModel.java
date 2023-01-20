@@ -52,4 +52,14 @@ public class ProfileViewModel extends ViewModel {
         return imageProfile;
     }
 
+    public void setChanges(User user){
+        usuario.setValue(user.getUsername());
+        email.setValue(user.getEmail());
+        imageProfile.setValue(manager.getDrawableFromByte(user.getProfileImage()));
+    }
+
+    public void changeImage(byte[] image){
+        imageProfile.setValue(manager.getDrawableFromByte(image));
+    }
+
 }

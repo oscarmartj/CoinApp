@@ -35,6 +35,8 @@ public class DataManager {
     public static final int CAMERA_PERMISSION_REQUEST_CODE=1;
     public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE=2;
 
+    public static final int CAMERA_PHOTO_OK = 3;
+
     public static void setSuccesfullTime(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -302,6 +304,12 @@ public class DataManager {
         }
         boolean matches = username.matches("^[a-zA-Z0-9._-]{3,}$");
         return matches;
+    }
+
+    public static boolean getFlagNoEdit (Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("PHOTO_NO_EDIT",MODE_PRIVATE);
+        return sharedPreferences.getBoolean("flag",false);
+
     }
 }
 
