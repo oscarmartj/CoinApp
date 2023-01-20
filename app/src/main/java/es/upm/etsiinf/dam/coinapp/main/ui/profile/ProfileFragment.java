@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment {
         TextView changePassword = binding.includeContentProfile.twChangepassword;
         TextInputEditText user = binding.includeContentProfile.tietUser;
         TextInputEditText email = binding.includeContentProfile.tietEmail;
-        ShapeableImageView shapeableImageView = binding.includeContentProfile.ivCircleProfile;
+        ShapeableImageView shapeableImageView = binding.includeContentProfile.ivCircleMagicCoin;
 
         ImageManager manager = new ImageManager();
 

@@ -4,19 +4,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.MainActivity">
+    tools:context=".main.ui.magic.MagicFragment">
+
+    <TextView
+        android:id="@+id/magic_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/height_between_edittext_profile"
+        android:fontFamily="sans-serif-black"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#F4EFEF"
+        android:textSize="34sp"
+        android:typeface="normal"
+        app:layout_constraintBottom_toTopOf="@+id/iv_circle_magic_coin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_circle_magic_coin"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginStart="150dp"
+        android:layout_marginTop="@dimen/app_bar_height"
         android:layout_marginEnd="150dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/circleImageView"
         app:srcCompat="@drawable/defaultprofile" />
+
+    <TextView
+        android:id="@+id/magic_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/height_between_edittext_profile"
+        android:fontFamily="sans-serif-black"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#FB0303"
+        android:textSize="40sp"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_circle_magic_coin" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button_see"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        app:backgroundTint="#FFFFFF"
+        app:borderWidth="12dp"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@+id/floating_action_button_reload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="24dp"
+        app:shapeAppearanceOverlay="@style/Widget.Material3.FloatingActionButton.Primary"
+        style="?attr/floatingActionButtonSmallStyle"
+        app:srcCompat="@drawable/ic_logout_black24dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button_reload"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="80dp"
+        app:backgroundTint="#FFFFFF"
+        app:borderWidth="16dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/Widget.Material3.FloatingActionButton.Primary"
+        app:srcCompat="@drawable/ic_logout_black24dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

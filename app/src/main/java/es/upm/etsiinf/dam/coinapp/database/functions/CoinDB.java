@@ -295,6 +295,90 @@ public class CoinDB {
         return result;
     }
 
+    @SuppressLint("Range")
+    public Coin getCoinByMarketCap (int marketcapranktoshow) throws JSONException {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_MARKET_CAP_RANK + " = ?", new String[] {String.valueOf(marketcapranktoshow)});
+        Coin result = new Coin();
+        if(cursor.moveToFirst()){
+            String id = cursor.getString(cursor.getColumnIndex(COLUMN_ID));
+            String symbol = cursor.getString(cursor.getColumnIndex(COLUMN_SYMBOL));
+            String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+            byte[] image = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE));
+            Bitmap imagebitmap = new ImageManager().getBitmapFromBLOB(image);
+            double currentPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_CURRENT_PRICE));
+            double marketCap = cursor.getDouble(cursor.getColumnIndex(COLUMN_MARKET_CAP));
+            int marketCapRank = cursor.getInt(cursor.getColumnIndex(COLUMN_MARKET_CAP_RANK));
+            double fullyDilutedValuation = cursor.getDouble(cursor.getColumnIndex(COLUMN_FULLY_DILUTED_VALUATION));
+            double totalVolume = cursor.getDouble(cursor.getColumnIndex(COLUMN_TOTAL_VOLUME));
+            double high24h = cursor.getDouble(cursor.getColumnIndex(COLUMN_HIGH_24H));
+            double low24h = cursor.getDouble(cursor.getColumnIndex(COLUMN_LOW_24H));
+            double priceChange24h = cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_CHANGE_24H));
+            double priceChangePercentage24h = cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_CHANGE_PERCENTAGE_24H));
+            double marketCapChange24h = cursor.getDouble(cursor.getColumnIndex(COLUMN_MARKET_CAP_CHANGE_24H));
+            double marketCapChangePercentage24h = cursor.getDouble(cursor.getColumnIndex(COLUMN_MARKET_CAP_CHANGE_PERCENTAGE_24H));
+            double circulatingSupply = cursor.getDouble(cursor.getColumnIndex(COLUMN_CIRCULATING_SUPPLY));
+            double totalSupply = cursor.getDouble(cursor.getColumnIndex(COLUMN_TOTAL_SUPPLY));
+            double maxSupply = cursor.getDouble(cursor.getColumnIndex(COLUMN_MAX_SUPPLY));
+            double ath = cursor.getDouble(cursor.getColumnIndex(COLUMN_ATH));
+            double athChangePercentage = cursor.getDouble(cursor.getColumnIndex(COLUMN_ATH_CHANGE_PERCENTAGE));
+            String athDate = cursor.getString(cursor.getColumnIndex(COLUMN_ATH_DATE));
+            double atl = cursor.getDouble(cursor.getColumnIndex(COLUMN_ATL));
+            double atlChangePercentage = cursor.getDouble(cursor.getColumnIndex(COLUMN_ATL_CHANGE_PERCENTAGE));
+            String atlDate = cursor.getString(cursor.getColumnIndex(COLUMN_ATL_DATE));
+            String roiString = cursor.getString(cursor.getColumnIndex(COLUMN_ROI));
+
+            Coin.Roi roi = new Coin.Roi();
+            if(!roiString.isEmpty()){
+                JSONObject jsonObject = new JSONObject(roiString);
+                double times = jsonObject.getDouble("times");
+                String currency = jsonObject.getString("currency");
+                double percentage = jsonObject.getDouble("percentage");
+
+                roi.setCurrency(currency);
+                roi.setTimes(times);
+                roi.setPercentage(percentage);
+            }
+            String lastUpdated = cursor.getString(cursor.getColumnIndex(COLUMN_LAST_UPDATED));
+
+            //Creo el objeto
+            Coin coin = new Coin();
+            coin.setId(id);
+            coin.setSymbol(symbol);
+            coin.setName(name);
+            coin.setImageBytes(image);
+            coin.setImageBitmap(imagebitmap);
+            coin.setCurrent_price(currentPrice);
+            coin.setMarket_cap_rank(marketCapRank);
+            coin.setMarket_cap(marketCap);
+            coin.setFully_diluted_valuation(fullyDilutedValuation);
+            coin.setTotal_volume(totalVolume);
+            coin.setHigh_24h(high24h);
+            coin.setLow_24h(low24h);
+            coin.setPrice_change_24h(priceChange24h);
+            coin.setPrice_change_percentage_24h(priceChangePercentage24h);
+            coin.setMarket_cap_change_24h(marketCapChange24h);
+            coin.setMarket_cap_change_percentage_24h(marketCapChangePercentage24h);
+            coin.setCirculating_supply(circulatingSupply);
+            coin.setTotal_supply(totalSupply);
+            coin.setMax_supply(maxSupply);
+            coin.setAth_change_percentage(athChangePercentage);
+            coin.setAth(ath);
+            coin.setAth_date(athDate);
+            coin.setAtl(atl);
+            coin.setAtl_change_percentage(atlChangePercentage);
+            coin.setAtl_date(atlDate);
+            coin.setRoi(roi);
+            coin.setLast_updated(lastUpdated);
+            result = coin;
+            cursor.close();
+        }
+
+
+        Log.i("ResultCoin",result.toString());
+        return result;
+    }
+
     public List<Coin> getCoinsMarketCapRange (int min, int max) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 

@@ -11,6 +11,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.json.JSONException;
+
+import java.security.SecureRandom;
+
+import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
+import es.upm.etsiinf.dam.coinapp.modelos.Coin;
+
 public class MagicViewModel extends ViewModel implements SensorEventListener {
 
     private Context context;
@@ -18,10 +25,13 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private BallView mBallView;
+    private final MutableLiveData<Coin> randomCoin;
+    private CoinDB coinDB;
 
     public MagicViewModel (Context context, SensorManager mSensorManager, Sensor mAccelerometer, BallView view) {
         Log.i("magicC","entra aqui");
         this.context = context;
+        this.coinDB = new CoinDB(context);
         this.mSensorManager = mSensorManager;
         this.mAccelerometer = mAccelerometer;
         this.mBallView = view;
@@ -29,6 +39,27 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
         numVisibleBalls = new MutableLiveData<>();
         numVisibleBalls.setValue(500);
 
+        randomCoin = new MutableLiveData<>();
+
+        randomCoin.setValue(getRandomCoin(coinDB));
+
+    }
+
+    public LiveData<Coin> getRandomCoin(){return randomCoin;}
+
+    private Coin getRandomCoin (CoinDB coinDB) {
+        int numCoinsInDB = coinDB.getNumOfRecords();
+        //Get random number to show random coin
+        SecureRandom secureRandom = new SecureRandom(); //he querido utilizar securerandom en vez de la clase random, es mas seguro por lo visto.
+        int randomNumber = secureRandom.nextInt(numCoinsInDB)+1; //entre 1....numCoinsInDB
+        Coin coin = new Coin();
+        try {
+            coin = coinDB.getCoinByMarketCap(randomNumber);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return coin;
     }
 
     public LiveData<Integer> getNumVisibleBalls () {
