@@ -14,6 +14,13 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Base.Widget.Material3.FloatingActionButton.Small" parent="Base.Widget.Material3.FloatingActionButton" tools:ignore="PrivateResource">
+        <item name="fabCustomSize">@dimen/m3_comp_fab_primary_small_container_height</item>
+        <item name="maxImageSize">@dimen/m3_comp_fab_primary_small_icon_size</item>
+        <item name="shapeAppearance">@macro/m3_comp_fab_primary_small_container_shape</item>
+        <item name="shapeAppearanceOverlay">@null</item>
+    </style>
+
     <style name="Theme.CoinApp.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

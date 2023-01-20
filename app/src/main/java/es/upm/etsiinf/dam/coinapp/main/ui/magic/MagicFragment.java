@@ -3,7 +3,12 @@ package es.upm.etsiinf.dam.coinapp.main.ui.magic;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -27,6 +32,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import org.json.JSONException;
@@ -38,6 +45,7 @@ import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.databinding.ContentMagicBinding;
 import es.upm.etsiinf.dam.coinapp.databinding.FragmentMagicBinding;
+import es.upm.etsiinf.dam.coinapp.main.ui.ranking.singleextended.DetailActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
@@ -53,6 +61,7 @@ public class MagicFragment extends Fragment {
     private MagicViewModel magicViewModel;
     private CoinDB coinDB;
     private ImageManager im;
+    private Coin coinToUse;
 
     @Override
     public void onCreate (@Nullable Bundle savedInstanceState) {
@@ -62,6 +71,7 @@ public class MagicFragment extends Fragment {
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         coinDB = new CoinDB(requireActivity());
         im = new ImageManager();
+        coinToUse = new Coin();
 
     }
 
@@ -88,6 +98,8 @@ public class MagicFragment extends Fragment {
         ShapeableImageView coin_siv = binding.includeActivity.ivCircleMagicCoin;
         TextView coin_price = binding.includeActivity.magicPrice;
         TextView coin_name = binding.includeActivity.magicName;
+        FloatingActionButton refresh = binding.includeActivity.floatingActionButtonReload;
+        FloatingActionButton see = binding.includeActivity.floatingActionButtonSee;
         magicViewModel.getRandomCoin().observe(getViewLifecycleOwner(), coin1 -> {
             coin_siv.setImageDrawable(im.getDrawableFromByte(coin1.getImageBytes()));
             coin_name.setText("#"+coin1.getMarket_cap_rank()+"\n"+coin1.getName());
@@ -99,6 +111,23 @@ public class MagicFragment extends Fragment {
             }else{
                 coin_price.setText("$"+String.format(Locale.US,"%,.2f",coin1.getCurrent_price()));
             }
+
+            int color = Color.parseColor(im.getDominantColor2(im.getBitmapFromBLOB(coin1.getImageBytes())));
+            refresh.setBackgroundTintList(ColorStateList.valueOf(color));
+            see.setBackgroundTintList(ColorStateList.valueOf(color));
+            setColorIconButton(see,refresh,color);
+            coinToUse=coin1;
+
+        });
+
+        see.setOnClickListener(view -> {
+            Intent intent = new Intent(requireActivity(), DetailActivity.class);
+            intent.putExtra("coin_id",coinToUse.getId());
+            startActivity(intent);
+        });
+
+        refresh.setOnClickListener(view -> {
+            magicViewModel = null;
         });
 
 
@@ -151,5 +180,21 @@ public class MagicFragment extends Fragment {
         super.onDestroyView();
         binding = null;
         magicViewModel = null;
+    }
+
+    public void setColorIconButton(FloatingActionButton see, FloatingActionButton refresh, int color) {
+
+        if (colorEsClaro(color)) {
+            refresh.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+            see.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+        } else {
+            refresh.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+            see.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+        }
+    }
+
+    public boolean colorEsClaro(int colorToolbar){
+        return Color.luminance(colorToolbar) > 0.5;
+
     }
 }

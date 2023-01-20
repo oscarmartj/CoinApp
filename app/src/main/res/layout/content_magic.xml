@@ -69,9 +69,8 @@
         app:layout_constraintBottom_toTopOf="@+id/floating_action_button_reload"
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="24dp"
-        app:shapeAppearanceOverlay="@style/Widget.Material3.FloatingActionButton.Primary"
-        style="?attr/floatingActionButtonSmallStyle"
-        app:srcCompat="@drawable/ic_logout_black24dp" />
+        app:shapeAppearanceOverlay="@style/Base.Widget.Material3.FloatingActionButton.Small"
+        app:srcCompat="@drawable/ic_see_24dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_button_reload"
@@ -86,7 +85,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/Widget.Material3.FloatingActionButton.Primary"
-        app:srcCompat="@drawable/ic_logout_black24dp" />
+        app:srcCompat="@drawable/ic_refresh_24dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
