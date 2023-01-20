@@ -105,6 +105,11 @@ public class MagicFragment extends Fragment {
         ImageView imageViewArrow = binding.includeActivity.ivPercentageMagic;
         LinearLayout arrowAndPercentage = binding.includeActivity.llMagicPercentage;
 
+        //Colores para el texto del precio
+        int green = context.getColor(R.color.green_up);
+        int red = context.getColor(R.color.red_down);
+        int grey = context.getColor(R.color.grey_equal);
+
         FloatingActionButton refresh = binding.includeActivity.floatingActionButtonReload;
         FloatingActionButton see = binding.includeActivity.floatingActionButtonSee;
         magicViewModel.getRandomCoin().observe(getViewLifecycleOwner(), coin1 -> {
@@ -121,22 +126,27 @@ public class MagicFragment extends Fragment {
 
             double percentage = coin1.getPrice_change_percentage_24h();
 
+
             if(!Double.isNaN(percentage)){
                 String percentageString = DataManager.roundNumber(percentage);
                 double percentageRound = DataManager.roundNumberWithSign(percentage);
                 if(percentageRound>0.0){
                     textViewPercentage.setText(getText(percentageString));
                     imageViewArrow.setImageResource(R.drawable.ic_arrowup_green_24dp);
+                    coin_price.setTextColor(green);
                 }else if(percentageRound<0.0){
                     textViewPercentage.setText(getText(percentageString));
                     imageViewArrow.setImageResource(R.drawable.ic_arrowdown_red_24dp);
+                    coin_price.setTextColor(red);
                 }else{
                     textViewPercentage.setText(getText());
                     imageViewArrow.setImageResource(R.drawable.ic_arrowright_grey_24dp);
+                    coin_price.setTextColor(grey);
                 }
             }else{
                 textViewPercentage.setText(getString());
                 imageViewArrow.setImageResource(R.drawable.ic_arrowright_grey_24dp);
+                coin_price.setTextColor(grey);
             }
 
             int color = Color.parseColor(im.getDominantColor2(im.getBitmapFromBLOB(coin1.getImageBytes())));
