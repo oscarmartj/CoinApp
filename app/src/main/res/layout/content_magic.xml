@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_container_magic"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".main.ui.magic.MagicFragment">
@@ -28,9 +29,7 @@
         android:id="@+id/iv_circle_magic_coin"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginStart="150dp"
         android:layout_marginTop="@dimen/app_bar_height"
-        android:layout_marginEnd="150dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -86,6 +85,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/Widget.Material3.FloatingActionButton.Primary"
         app:srcCompat="@drawable/ic_refresh_24dp" />
+
+    <LinearLayout
+        android:id="@+id/ll_magic_percentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/magic_price">
+
+        <ImageView
+            android:id="@+id/iv_percentage_magic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrowup_green_24dp" />
+
+        <TextView
+            android:id="@+id/tv_percentage_magic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="TextView" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,7 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
     private BallView mBallView;
     private final MutableLiveData<Coin> randomCoin;
     private CoinDB coinDB;
+    private boolean reset=false;
 
     public MagicViewModel (Context context, SensorManager mSensorManager, Sensor mAccelerometer, BallView view) {
         Log.i("magicC","entra aqui");
@@ -34,7 +35,7 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
         this.coinDB = new CoinDB(context);
         this.mSensorManager = mSensorManager;
         this.mAccelerometer = mAccelerometer;
-        this.mBallView = view;
+        mBallView = view;
         mSensorManager.registerListener(this,mAccelerometer,SensorManager.SENSOR_DELAY_NORMAL);
         numVisibleBalls = new MutableLiveData<>();
         numVisibleBalls.setValue(500);

@@ -25,11 +25,14 @@ import android.view.animation.AnimationSet;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -98,6 +101,10 @@ public class MagicFragment extends Fragment {
         ShapeableImageView coin_siv = binding.includeActivity.ivCircleMagicCoin;
         TextView coin_price = binding.includeActivity.magicPrice;
         TextView coin_name = binding.includeActivity.magicName;
+        TextView textViewPercentage = binding.includeActivity.tvPercentageMagic;
+        ImageView imageViewArrow = binding.includeActivity.ivPercentageMagic;
+        LinearLayout arrowAndPercentage = binding.includeActivity.llMagicPercentage;
+
         FloatingActionButton refresh = binding.includeActivity.floatingActionButtonReload;
         FloatingActionButton see = binding.includeActivity.floatingActionButtonSee;
         magicViewModel.getRandomCoin().observe(getViewLifecycleOwner(), coin1 -> {
@@ -110,6 +117,26 @@ public class MagicFragment extends Fragment {
                 coin_price.setText("$"+String.format(Locale.US,"%,."+(firstPositionWithout0+1)+"f",coin1.getCurrent_price()));
             }else{
                 coin_price.setText("$"+String.format(Locale.US,"%,.2f",coin1.getCurrent_price()));
+            }
+
+            double percentage = coin1.getPrice_change_percentage_24h();
+
+            if(!Double.isNaN(percentage)){
+                String percentageString = DataManager.roundNumber(percentage);
+                double percentageRound = DataManager.roundNumberWithSign(percentage);
+                if(percentageRound>0.0){
+                    textViewPercentage.setText(getText(percentageString));
+                    imageViewArrow.setImageResource(R.drawable.ic_arrowup_green_24dp);
+                }else if(percentageRound<0.0){
+                    textViewPercentage.setText(getText(percentageString));
+                    imageViewArrow.setImageResource(R.drawable.ic_arrowdown_red_24dp);
+                }else{
+                    textViewPercentage.setText(getText());
+                    imageViewArrow.setImageResource(R.drawable.ic_arrowright_grey_24dp);
+                }
+            }else{
+                textViewPercentage.setText(getString());
+                imageViewArrow.setImageResource(R.drawable.ic_arrowright_grey_24dp);
             }
 
             int color = Color.parseColor(im.getDominantColor2(im.getBitmapFromBLOB(coin1.getImageBytes())));
@@ -127,53 +154,56 @@ public class MagicFragment extends Fragment {
         });
 
         refresh.setOnClickListener(view -> {
-            magicViewModel = null;
+            getActivity().recreate();
         });
 
 
 
 
 
-        if(viewBall.getVisibility() != View.INVISIBLE){
-            magicViewModel.getNumVisibleBalls().observe(getViewLifecycleOwner(), integer -> {
-                if(integer ==0){
-                    viewBall.setVisibility(View.INVISIBLE);
-                    contentBinding.getRoot().setVisibility(View.VISIBLE);
+        //if(viewBall.getVisibility() != View.INVISIBLE){
+        magicViewModel.getNumVisibleBalls().observe(getViewLifecycleOwner(), integer -> {
+            if(integer ==0){
+                viewBall.setVisibility(View.INVISIBLE);
+                contentBinding.getRoot().setVisibility(View.VISIBLE);
 
 
-                    //Crear aqui la magia de la animacion
-                    AnimationSet animationSet = new AnimationSet(true);
+                //Crear aqui la magia de la animacion
+                AnimationSet animationSet = new AnimationSet(true);
 
-                    ScaleAnimation scaleAnimation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
-                            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                    scaleAnimation.setDuration(500);
+                ScaleAnimation scaleAnimation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                scaleAnimation.setDuration(500);
 
-                    AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
-                    alphaAnimation.setDuration(500);
+                AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+                alphaAnimation.setDuration(500);
 
-                    animationSet.addAnimation(scaleAnimation);
-                    animationSet.addAnimation(alphaAnimation);
-
-
-                    coin_siv.setAnimation(animationSet);
-                    coin_name.setAnimation(animationSet);
-                    coin_price.setAnimation(animationSet);
-
-                    coin_siv.startAnimation(animationSet);
-                    coin_name.startAnimation(animationSet);
-                    coin_price.startAnimation(animationSet);
+                animationSet.addAnimation(scaleAnimation);
+                animationSet.addAnimation(alphaAnimation);
 
 
-                }else{
-                    if(integer > 0){
-                        viewBall.setVisibility(View.VISIBLE);
-                        contentBinding.getRoot().setVisibility(View.INVISIBLE);
-                    }
+                coin_siv.setAnimation(animationSet);
+                coin_name.setAnimation(animationSet);
+                coin_price.setAnimation(animationSet);
+                arrowAndPercentage.setAnimation(animationSet);
+
+                coin_siv.startAnimation(animationSet);
+                coin_name.startAnimation(animationSet);
+                coin_price.startAnimation(animationSet);
+                arrowAndPercentage.startAnimation(animationSet);
+
+
+            }else{
+                if(integer > 0){
+                    viewBall.setVisibility(View.VISIBLE);
+                    contentBinding.getRoot().setVisibility(View.INVISIBLE);
                 }
-            });
-        }
+            }
+        });
+
         return frameLayout;
     }
+
 
     @Override
     public void onDestroyView () {
@@ -196,5 +226,20 @@ public class MagicFragment extends Fragment {
     public boolean colorEsClaro(int colorToolbar){
         return Color.luminance(colorToolbar) > 0.5;
 
+    }
+
+    @NonNull
+    private String getString () {
+        return String.format("%s%%", DataManager.roundNumber(0.0)) + " (last 24h)";
+    }
+
+    @NonNull
+    private String getText () {
+        return String.format("%s%%", "0.0") + " (last 24h)";
+    }
+
+    @NonNull
+    private String getText (String percentageString) {
+        return String.format("%s%%", percentageString) + " (last 24h)";
     }
 }
