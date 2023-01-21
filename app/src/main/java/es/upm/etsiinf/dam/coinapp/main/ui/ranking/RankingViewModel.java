@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -32,9 +34,11 @@ public class RankingViewModel extends ViewModel {
     private final Context context;
     private MutableLiveData<String> noInternet;
     private CoinDB coinDB;
+    private ProgressBar progressBar;
 
-    public RankingViewModel (Context context) {
+    public RankingViewModel (Context context, ProgressBar progressBar) {
         this.context=context;
+        this.progressBar = progressBar;
         coinDB = new CoinDB(context);
         coins = new MutableLiveData<>();
         coins.setValue(new LinkedList<>());
@@ -66,7 +70,6 @@ public class RankingViewModel extends ViewModel {
 
     public void loadMoreCoins (boolean connected) {
         if(isLoading) {
-            return;
         } else {
             this.handler = new Handler(Looper.getMainLooper()) {
                 @Override
@@ -99,8 +102,10 @@ public class RankingViewModel extends ViewModel {
                     }
                 }
             };
-            isLoading = true;
+            isLoading=true;
+            progressBar.setVisibility(View.VISIBLE);
             if(connected){
+                progressBar.setVisibility(View.VISIBLE);
                 CoinGeckoThread coinGeckoThread = new CoinGeckoThread(this.page, handler);
                 new Thread(coinGeckoThread).start();
             }else{

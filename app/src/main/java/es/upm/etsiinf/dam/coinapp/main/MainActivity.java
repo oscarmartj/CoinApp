@@ -1,17 +1,9 @@
 package es.upm.etsiinf.dam.coinapp.main;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,29 +12,30 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import org.json.JSONException;
-
-import java.util.List;
-
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.SplashActivity;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityMainBinding;
-import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationScheduleJob;
-import es.upm.etsiinf.dam.coinapp.services.updates.job.UpdateScheduleJob;
 import es.upm.etsiinf.dam.coinapp.utils.ConnectionManager;
-import es.upm.etsiinf.dam.coinapp.utils.DataManager;
-import es.upm.etsiinf.dam.coinapp.utils.KeyboardUtil;
 import es.upm.etsiinf.dam.coinapp.utils.NotificationUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private ConnectionManager connectionManager;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context context = this;
+        Context context = MainActivity.this;
+        connectionManager = new ConnectionManager(MainActivity.this);
+
+        connectionManager.connectionCheck(()-> runOnUiThread(() -> {
+
+            Intent intent = new Intent(context, SplashActivity.class);
+            startActivity(intent);
+            finish();
+        }));
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -62,17 +55,51 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        ConnectionManager.connectionCheck(this, new ConnectionManager.OnConnectionCallback() {
-            @Override
-            public void onConnectionCallback () {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run () {
-                        Intent intent = new Intent(context, SplashActivity.class);
-                        startActivity(intent);
-                    }
-                });
-            }
-        });
+
+
     }
+
+    /*
+    private void connectionCheck(Context context, OnNetworkStatusCallback onNetworkStatusCallback){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .build();
+
+        ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                if(!isConnected){
+                    onNetworkStatusCallback.onNetworkStatusCallback();
+                    isConnected=true;
+                }
+            }
+
+            @Override
+            public void onUnavailable () {
+                isConnected=false;
+            }
+
+            @Override
+            public void onLost (@NonNull Network network) {
+                isConnected=false;
+                onNetworkStatusCallback.onNetworkStatusCallback();
+
+            }
+        };
+
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
+    }
+
+    private boolean isConnected(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
+    public interface OnNetworkStatusCallback{
+        void onNetworkStatusCallback();
+    }*/
 }

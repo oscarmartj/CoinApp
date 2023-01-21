@@ -33,21 +33,25 @@ public class RankingFragment extends Fragment {
     private FragmentRankingBinding binding;
     private RankingAdapter rankingAdapter;
     private Context context;
+    private RankingViewModel rankingViewModel;
 
 
     public View onCreateView (@NonNull LayoutInflater inflater,
                               ViewGroup container, Bundle savedInstanceState) {
-        context = requireActivity();
-        RankingViewModel rankingViewModel =
-                new ViewModelProvider(this, new RankingViewModelFactory(context)).get(RankingViewModel.class);
 
+        context = requireActivity();
         binding = FragmentRankingBinding.inflate(inflater, container, false);
+        ProgressBar progressBar = binding.progressBarCoins;
+        rankingViewModel =
+                new ViewModelProvider(this, new RankingViewModelFactory(context,progressBar)).get(RankingViewModel.class);
+
         View root = binding.getRoot();
 
-        ProgressBar progressBar = binding.progressBarCoins;
         ListView listviewCoins = binding.listviewCoins;
         rankingAdapter = new RankingAdapter();
         listviewCoins.setAdapter(rankingAdapter);
+
+
 
         //Añadir el caracter "Infinite Scrolling"
         listviewCoins.setOnScrollListener(new AbsListView.OnScrollListener() {

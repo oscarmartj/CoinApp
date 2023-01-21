@@ -56,50 +56,50 @@ public class Coin{
         HashMap<String, Object> result= new HashMap<String, Object>();
         switch (position){
             case 1:
-                if(Double.isNaN(current_price)) return null;
+                if(Double.valueOf(current_price) == null || Double.isNaN(current_price)) return null;
                 result.put("Price", current_price);
                 return result;
             case 2:
-                if(Double.isNaN(low_24h) || Double.isNaN(high_24h)) return null;
+                if(Double.valueOf(low_24h) == null || Double.valueOf(high_24h) == null ||Double.isNaN(low_24h) || Double.isNaN(high_24h) || low_24h==0.0 ||high_24h==0.0) return null;
                 result.put("24h Low", low_24h);
                 result.put("24h High", high_24h);
                 return result;
             case 3:
-                if(Double.isNaN(total_volume) || total_volume==0.0) return null;
+                if(Double.valueOf(total_volume) == null || Double.isNaN(total_volume) || total_volume==0.0) return null;
                 result.put("Total Volume", total_volume);
                 return result;
             case 4:
                 result.put("Market Cap Rank", "#"+market_cap_rank);
                 return result;
             case 5:
-                if(Double.isNaN(market_cap)) return null;
+                if(Double.valueOf(market_cap) == null || Double.isNaN(market_cap)) return null;
                 result.put("Market Cap", "$"+market_cap);
                 return result;
             case 6:
-                if(Double.isNaN(circulating_supply) || circulating_supply==0.0) return null;
+                if(Double.valueOf(circulating_supply) == null || Double.isNaN(circulating_supply) || circulating_supply==0.0) return null;
                 result.put("Circulating Supply", circulating_supply);
                 return result;
             case 7:
-                if(Double.isNaN(total_supply) || total_supply==0.0) return null;
+                if(Double.valueOf(total_supply) == null || Double.isNaN(total_supply) || total_supply==0.0) return null;
                 result.put("Total Supply", total_supply);
                 return result;
             case 8:
-                if(Double.isNaN(max_supply) || max_supply==0.0) return null;
+                if(Double.valueOf(max_supply) == null || Double.isNaN(max_supply) || max_supply==0.0) return null;
                 result.put("Max Supply", max_supply);
                 return result;
             case 9:
-                if(Double.isNaN(fully_diluted_valuation) || fully_diluted_valuation==0.0) return null;
+                if(Double.valueOf(fully_diluted_valuation) == null || Double.isNaN(fully_diluted_valuation) || fully_diluted_valuation==0.0) return null;
                 result.put("Fully Diluted Valuation", fully_diluted_valuation);
                 return result;
             case 10:
-                if(Double.isNaN(ath) ||Double.isNaN(ath_change_percentage) || ath_date.isEmpty()) return null;
+                if(Double.valueOf(ath) == null || ath_date==null || Double.valueOf(ath_change_percentage) == null || Double.isNaN(ath) ||Double.isNaN(ath_change_percentage) || ath_date.isEmpty()) return null;
                 result.put("All-Time High", ath);
                 result.put("percentage ath",ath_change_percentage);
                 result.put("Date ath",ath_date);
 
                 return result;
             case 11:
-                if(Double.isNaN(atl) ||Double.isNaN(atl_change_percentage) || atl_date.isEmpty()) return null;
+                if(Double.valueOf(atl) == null || Double.valueOf(atl_change_percentage) == null || atl_date==null || Double.isNaN(atl) ||Double.isNaN(atl_change_percentage) || atl_date.isEmpty()) return null;
                 result.put("All-Time Low", atl);
                 result.put("percentage atl",atl_change_percentage);
                 result.put("Date atl",atl_date);

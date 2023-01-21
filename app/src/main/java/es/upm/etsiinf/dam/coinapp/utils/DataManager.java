@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.icu.math.BigDecimal;
+import android.icu.text.NumberFormat;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -38,24 +39,25 @@ import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 public class DataManager {
 
-    public static final int CAMERA_PERMISSION_REQUEST_CODE=1;
-    public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE=2;
+    public static final int CAMERA_PERMISSION_REQUEST_CODE = 1;
+    public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 2;
 
     public static final int CAMERA_PHOTO_OK = 3;
 
-    public static void setSuccesfullTime(Context context){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work",MODE_PRIVATE);
+    public static void setSuccesfullTime (Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong("time",System.currentTimeMillis());
+        editor.putLong("time", System.currentTimeMillis());
         editor.apply();
     }
 
-    public static long getSuccesfullTime(Context context){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work",MODE_PRIVATE);
-        return sharedPreferences.getLong("time",0);
+    public static long getSuccesfullTime (Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("succesful_time_work", MODE_PRIVATE);
+        return sharedPreferences.getLong("time", 0);
 
     }
-    public static void saveDatabaseVersion(int version, Context context) {
+
+    public static void saveDatabaseVersion (int version, Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("DATABASE_VERSION", version);
@@ -67,84 +69,87 @@ public class DataManager {
         return sharedPreferences.getInt("DATABASE_VERSION", 1);
     }
 
-    public static String roundNumber(double num) {
+    public static String roundNumber (double num) {
         BigDecimal bd = new BigDecimal(num);
         bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
         String result = bd.toString();
-        if (result.charAt(0) == '-') {
+        if(result.charAt(0) == '-') {
             result = result.substring(1);
         }
         return result;
     }
-    public static double roundNumberWithSign(double num) {
+
+    public static double roundNumberWithSign (double num) {
         BigDecimal bd = new BigDecimal(num);
         bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
         return bd.doubleValue();
     }
 
-    public static int getInitialRange(int x) {
-        if (x == 1) {
+    public static int getInitialRange (int x) {
+        if(x == 1) {
             return 1;
         }
-        return (x-1) * 20;
+        return (x - 1) * 20;
     }
 
-    public static String setIntentShareText(Coin coin){
+    public static String setIntentShareText (Coin coin) {
         //emoticonos y utiles
-        String redCircle="\uD83D\uDD34";
-        String greenCircle="\uD83D\uDFE2";
+        String redCircle = "\uD83D\uDD34";
+        String greenCircle = "\uD83D\uDFE2";
         String symbolCoin = coin.getSymbol().toUpperCase();
         String dollarHashtagSymbol = "$";
-        String currentPrice = dollarHashtagSymbol+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getCurrent_price()) )+"f",coin.getCurrent_price());
+        String currentPrice = dollarHashtagSymbol + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getCurrent_price())) + "f", coin.getCurrent_price());
         double percentage = coin.getPrice_change_percentage_24h();
-        String low24hWhatEmoji = (coin.getLow_24h()<coin.getHigh_24h()?redCircle:greenCircle);
-        String high24WhatEmoji = (coin.getHigh_24h()<coin.getLow_24h()?redCircle:greenCircle);
+        String low24hWhatEmoji = (coin.getLow_24h() < coin.getHigh_24h() ? redCircle : greenCircle);
+        String high24WhatEmoji = (coin.getHigh_24h() < coin.getLow_24h() ? redCircle : greenCircle);
 
-        String titulo="¿Como ha cambiado "+coin.getName()+" "+dollarHashtagSymbol+coin.getSymbol().toUpperCase()+"?"+"\n";
-        String cambio24h = "1 " + symbolCoin + " = " + currentPrice + " " + (percentage>0.0?"+"+percentage+"%":percentage+"%") + " " + (percentage < 0.0 ? redCircle + "\n" : greenCircle + "\n");
-        String detalles="Detalles:\n";
-        Log.i("precisionCambio",DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h())+" precio: "+coin.getPrice_change_24h());
-        String cambio = "Cambio: "+(new BigDecimal(coin.getPrice_change_24h()).toString().charAt(0)=='-'?redCircle:greenCircle+"+")+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h()) )+"f",coin.getPrice_change_24h())+dollarHashtagSymbol+"\n";
-        String low24h = "Precio más bajo (24h) = "+dollarHashtagSymbol+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getLow_24h()) )+"f",coin.getLow_24h())+low24hWhatEmoji+"\n";
-        String high24h = "Precio más alto (24h) = "+dollarHashtagSymbol+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getHigh_24h()) )+"f",coin.getHigh_24h())+high24WhatEmoji+"\n";
+        String titulo = "¿Como ha cambiado " + coin.getName() + " " + dollarHashtagSymbol + coin.getSymbol().toUpperCase() + "?" + "\n";
+        String cambio24h = "1 " + symbolCoin + " = " + currentPrice + " " + (percentage > 0.0 ? "+" + percentage + "%" : percentage + "%") + " " + (percentage < 0.0 ? redCircle + "\n" : greenCircle + "\n");
+        String detalles = "Detalles:\n";
+        Log.i("precisionCambio", DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h()) + " precio: " + coin.getPrice_change_24h());
+        String cambio = "Cambio: " + (new BigDecimal(coin.getPrice_change_24h()).toString().charAt(0) == '-' ? redCircle : greenCircle + "+") + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h())) + "f", coin.getPrice_change_24h()) + dollarHashtagSymbol + "\n";
+        String low24h = "Precio más bajo (24h) = " + dollarHashtagSymbol + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getLow_24h())) + "f", coin.getLow_24h()) + low24hWhatEmoji + "\n";
+        String high24h = "Precio más alto (24h) = " + dollarHashtagSymbol + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getHigh_24h())) + "f", coin.getHigh_24h()) + high24WhatEmoji + "\n";
         String salto = "\n";
-        String hashtag = "#"+symbolCoin+"\n";
+        String hashtag = "#" + symbolCoin + "\n";
 
-        return titulo+salto+cambio24h+detalles+cambio+low24h+high24h+salto+hashtag;
+        return titulo + salto + cambio24h + detalles + cambio + low24h + high24h + salto + hashtag;
     }
 
-    public static boolean isFavorite(Context context, String coinId){
+    public static boolean isFavorite (Context context, String coinId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("favorites", MODE_PRIVATE);
-        return sharedPreferences.getBoolean(coinId,false);
+        return sharedPreferences.getBoolean(coinId, false);
     }
-    public static void setFavorite(Context context, String coinId){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("favorites",MODE_PRIVATE);
+
+    public static void setFavorite (Context context, String coinId) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("favorites", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(coinId,true);
+        editor.putBoolean(coinId, true);
         editor.apply();
     }
-    public static void removeFavorite(Context context, String coinId){
+
+    public static void removeFavorite (Context context, String coinId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("favorites", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(coinId);
         editor.apply();
     }
 
-    public static List<String> getFavorites(SharedPreferences sharedPreferences) {
+    public static List<String> getFavorites (SharedPreferences sharedPreferences) {
 
         Map<String, ?> allEntries = sharedPreferences.getAll();
         List<String> trueCurrencies = new ArrayList<>();
 
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             Object value = entry.getValue();
-            if (value instanceof Boolean && (Boolean) value) {
+            if(value instanceof Boolean && (Boolean) value) {
                 trueCurrencies.add(entry.getKey());
             }
         }
         return trueCurrencies;
     }
 
-    public static List<Coin> setCoins(JSONArray coinsJson) throws JSONException, IOException {
+    public static List<Coin> setCoins (JSONArray coinsJson) throws JSONException, IOException {
         List<Coin> coins = new LinkedList<>();
         // Recorre la lista de criptomonedas en el objeto JSON y crea objetos Coin para cada una de ellas
         for (int i = 0; i < coinsJson.length(); i++) {
@@ -175,9 +180,9 @@ public class DataManager {
             String atl_date = coinJson.optString("atl_date");
             JSONObject roiJson = coinJson.optJSONObject("roi");
             Coin.Roi roi = new Coin.Roi();
-            if(roiJson == null ){
-                roi=null;
-            }else{
+            if(roiJson == null) {
+                roi = null;
+            } else {
                 roi.setTimes(roiJson.optDouble("times"));
                 roi.setCurrency(roiJson.optString("currency"));
                 roi.setPercentage(roiJson.optDouble("percentage"));
@@ -223,36 +228,36 @@ public class DataManager {
         return coins;
     }
 
-    public String setPendingShareText(Coin coin){
+    public String setPendingShareText (Coin coin) {
         //emoticonos y utiles
-        String redCircle="\uD83D\uDD34";
-        String greenCircle="\uD83D\uDFE2";
+        String redCircle = "\uD83D\uDD34";
+        String greenCircle = "\uD83D\uDFE2";
         String symbolCoin = coin.getSymbol().toUpperCase();
         String dollarHashtagSymbol = "$";
 
-        String currentPrice = dollarHashtagSymbol+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getCurrent_price()) )+"f",coin.getCurrent_price());
+        String currentPrice = dollarHashtagSymbol + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getCurrent_price())) + "f", coin.getCurrent_price());
         double percentage = coin.getPrice_change_percentage_24h();
-        String low24hWhatEmoji = (coin.getLow_24h()<coin.getHigh_24h()?redCircle:greenCircle);
-        String high24WhatEmoji = (coin.getHigh_24h()<coin.getLow_24h()?redCircle:greenCircle);
+        String low24hWhatEmoji = (coin.getLow_24h() < coin.getHigh_24h() ? redCircle : greenCircle);
+        String high24WhatEmoji = (coin.getHigh_24h() < coin.getLow_24h() ? redCircle : greenCircle);
 
-        String titulo="¿Como ha cambiado "+coin.getName()+" "+dollarHashtagSymbol+coin.getSymbol().toUpperCase()+"?"+"\n";
-        String cambio24h = "1 " + symbolCoin + " = " + currentPrice + " " + (percentage>0.0?"+"+percentage+"%":percentage+"%") + " " + (percentage < 0.0 ? redCircle + "\n" : greenCircle + "\n");
-        String detalles="Detalles:\n";
-        String cambio = "Cambio: "+(coin.getPrice_change_24h()<0.0?redCircle:greenCircle+"+")+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h()) )+"f",coin.getPrice_change_24h())+dollarHashtagSymbol+"\n";
-        String low24h = "Precio más bajo (24h) = "+dollarHashtagSymbol+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getLow_24h()) )+"f",coin.getLow_24h())+low24hWhatEmoji+"\n";
-        String high24h = "Precio más alto (24h) = "+dollarHashtagSymbol+String.format(Locale.US,"%,."+( DataManager.obtenerPrecisionFormato(coin.getHigh_24h()) )+"f",coin.getHigh_24h())+high24WhatEmoji+"\n";
+        String titulo = "¿Como ha cambiado " + coin.getName() + " " + dollarHashtagSymbol + coin.getSymbol().toUpperCase() + "?" + "\n";
+        String cambio24h = "1 " + symbolCoin + " = " + currentPrice + " " + (percentage > 0.0 ? "+" + percentage + "%" : percentage + "%") + " " + (percentage < 0.0 ? redCircle + "\n" : greenCircle + "\n");
+        String detalles = "Detalles:\n";
+        String cambio = "Cambio: " + (coin.getPrice_change_24h() < 0.0 ? redCircle : greenCircle + "+") + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h())) + "f", coin.getPrice_change_24h()) + dollarHashtagSymbol + "\n";
+        String low24h = "Precio más bajo (24h) = " + dollarHashtagSymbol + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getLow_24h())) + "f", coin.getLow_24h()) + low24hWhatEmoji + "\n";
+        String high24h = "Precio más alto (24h) = " + dollarHashtagSymbol + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getHigh_24h())) + "f", coin.getHigh_24h()) + high24WhatEmoji + "\n";
         String salto = "\n";
-        String hashtag = "#"+symbolCoin+"\n";
+        String hashtag = "#" + symbolCoin + "\n";
 
-        return titulo+salto+cambio24h+detalles+cambio+low24h+high24h+salto+hashtag;
+        return titulo + salto + cambio24h + detalles + cambio + low24h + high24h + salto + hashtag;
     }
 
-    public static int obtenerPrecisionFormato(double valor) {
+    public static int obtenerPrecisionFormato (double valor) {
         int firstPositionWithout0 = DataManager.obtenerPrimeraPosicionDecimal(valor);
 
-        if (firstPositionWithout0 > 2) {
+        if(firstPositionWithout0 > 2) {
             return firstPositionWithout0 + 1;
-        } else if (firstPositionWithout0 == 2 && String.valueOf(valor).length() > 2) {
+        } else if(firstPositionWithout0 == 2 && String.valueOf(valor).length() > 2) {
             return firstPositionWithout0 + 1;
         } else {
             return 2;
@@ -260,31 +265,31 @@ public class DataManager {
     }
 
 
-    public static int obtenerPrimeraPosicionDecimal(Double numero) {
+    public static int obtenerPrimeraPosicionDecimal (Double numero) {
         String str = Double.toString(numero);
         String formateo;
-        if(str.contains("E")){
+        if(str.contains("E")) {
             BigDecimal bd = new BigDecimal(numero);
-            String exponente = str.charAt(str.length()-2) +""+str.charAt(str.length()-1);
+            String exponente = str.charAt(str.length() - 2) + "" + str.charAt(str.length() - 1);
             double exp = Double.parseDouble(exponente);
-            if(exp < -6.0){
+            if(exp < -6.0) {
                 int valorAbsoluto = (int) Math.abs(exp);
-                bd = bd.setScale(valorAbsoluto+1, BigDecimal.ROUND_HALF_UP);
+                bd = bd.setScale(valorAbsoluto + 1, BigDecimal.ROUND_HALF_UP);
             }
             String formattedNumber = bd.toString();
-            formateo = formattedNumber.length() > 8 ? formattedNumber.substring(0, formattedNumber.length()>=10?10:8) : formattedNumber;
-        }else{
-            formateo=str;
+            formateo = formattedNumber.length() > 8 ? formattedNumber.substring(0, formattedNumber.length() >= 10 ? 10 : 8) : formattedNumber;
+        } else {
+            formateo = str;
         }
 
-        String parteEnteraString = formateo.substring(0,formateo.indexOf("."));
+        String parteEnteraString = formateo.substring(0, formateo.indexOf("."));
         int parteEntera = Integer.parseInt(parteEnteraString);
-        if (parteEntera>0) {
+        if(parteEntera > 0) {
             return -1;
         }
         int posicionPuntoDecimal = formateo.indexOf(".");
         for (int i = posicionPuntoDecimal + 1; i < formateo.length(); i++) {
-            if (formateo.charAt(i) != '0') {
+            if(formateo.charAt(i) != '0') {
                 return i - posicionPuntoDecimal;
             }
         }
@@ -302,8 +307,8 @@ public class DataManager {
         }
     }
 
-    public static boolean isUserNameValid(String username) {
-        if (username == null) {
+    public static boolean isUserNameValid (String username) {
+        if(username == null) {
             return false;
         }
         boolean matches = username.matches("^[a-zA-Z0-9._-]{3,}$");
@@ -311,9 +316,47 @@ public class DataManager {
     }
 
     public static boolean getFlagNoEdit (Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("PHOTO_NO_EDIT",MODE_PRIVATE);
-        return sharedPreferences.getBoolean("flag",false);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("PHOTO_NO_EDIT", MODE_PRIVATE);
+        return sharedPreferences.getBoolean("flag", false);
 
     }
+
+    public static String formateoExponentePositivo (Double numero) {
+        String str = Double.toString(numero);
+        String formateo = "";
+        if(str.contains("E")) {
+            BigDecimal bd = new BigDecimal(numero);
+            String formattedNumber = bd.toString();
+            formateo = formattedNumber;
+            return formateo;
+        } else {
+            return formateo;
+        }
+    }
+
+    public static String scientificToNormalNotation(String number) {
+        if (number != null && number.toString().contains("E-")) {
+            BigDecimal bd = new BigDecimal(Double.parseDouble(number));
+            Log.i("formateoOK", "bd: "+bd.toString());
+            return bd.toString();
+        } else {
+            return "";
+        }
+    }
+
+    public static String formatToCurrency(String number) {
+        try {
+            double doubleValue = Double.parseDouble(number);
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "US"));
+            formatter.setMinimumFractionDigits(obtenerPrimeraPosicionDecimal(doubleValue)+4);
+            return formatter.format(doubleValue);
+        } catch (NumberFormatException e) {
+            return "";
+        }
+    }
+
+
+
+
 }
 

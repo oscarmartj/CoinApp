@@ -64,6 +64,7 @@ public class SplashActivity extends AppCompatActivity {
     private int splashDuration;
     private SharedPreferences preferences;
     private long lastSuccesfulWork;
+    private ConnectionManager connectionManager;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -72,17 +73,15 @@ public class SplashActivity extends AppCompatActivity {
         preferences = getSharedPreferences("user_preferences", MODE_PRIVATE);
         lastSuccesfulWork = DataManager.getSuccesfullTime(this);
         Log.i("Work",lastSuccesfulWork+"");
+        connectionManager = new ConnectionManager(SplashActivity.this);
 
         ImageView logoImageView = findViewById(R.id.logo);
         TextView noInternetTW = findViewById(R.id.textview_centrado);
 
         CoinDB coinDB = new CoinDB(this);
 
-        //Si tiene conexión, elimina todas las filas para actualizar la base de datos
-        //Si no tiene conexión, no eliminara las filas de la base de datos y se mostraron datos que teniamos desde la última conexión
-        if(isConnected()) {
 
-            //coinDB.deleteAllCoins();
+        if(connectionManager.isConnected()) {
             //PRIMER TRABAJO
             long currentTime= System.currentTimeMillis();
             if(currentTime - lastSuccesfulWork > TimeUnit.HOURS.toMillis(1)){
@@ -102,22 +101,17 @@ public class SplashActivity extends AppCompatActivity {
 
 
         //Si no tiene conexión a internet y no tiene datos de las monedas guardados en la base de datos
-        if(!isConnected() && !hasData()){
+        if(!connectionManager.isConnected() && !hasData()){
             logoImageView.setVisibility(View.INVISIBLE);
             noInternetTW.setVisibility(View.VISIBLE);
-            ConnectionManager.connectionCheck(this, new ConnectionManager.OnConnectionCallback() {
-                @Override
-                public void onConnectionCallback () {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run () {
-                            recreate();
-                        }
-                    });
 
-                }
-            }); //espera hasta que tenga conexión
-        }else if(!isConnected() && hasData()){ //Si no tiene conexión a internet pero si que tiene datos en la db para poder mostrar offline.
+            connectionManager.connectionCheck(()-> runOnUiThread(() -> {
+                Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
+                startActivity(intent);
+                finish();
+            }));
+
+        }else if(!connectionManager.isConnected() && hasData()){ //Si no tiene conexión a internet pero si que tiene datos en la db para poder mostrar offline.
             //Si esta logueado
             if(userIsLoggedIn()){
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
@@ -200,12 +194,13 @@ public class SplashActivity extends AppCompatActivity {
         return TokenManager.userIsLoggedIn(TokenManager.getAccessTokenFromLocalStorage(preferences));
     }
 
+    /*
     private boolean isConnected(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         return isConnected;
-    }
+    }*/
 
     private boolean hasData(){
 
@@ -216,8 +211,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     /*
+
     private void connectionCheck(){
-        Class splashActivityClass = SplashActivity.class;
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkRequest networkRequest = new NetworkRequest.Builder()
                 .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
