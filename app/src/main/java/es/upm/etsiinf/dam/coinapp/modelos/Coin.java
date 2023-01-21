@@ -7,6 +7,10 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Coin{
@@ -43,6 +47,80 @@ public class Coin{
 
 
     public Coin(){}
+
+
+    public int sizeForList(){
+        return 11;
+    }
+    public HashMap<String,Object> getElementForList(int position){
+        HashMap<String, Object> result= new HashMap<String, Object>();
+        switch (position){
+            case 1:
+                if(Double.isNaN(current_price)) return null;
+                result.put("Price", current_price);
+                return result;
+            case 2:
+                if(Double.isNaN(low_24h) || Double.isNaN(high_24h)) return null;
+                result.put("24h Low", low_24h);
+                result.put("24h High", high_24h);
+                return result;
+            case 3:
+                if(Double.isNaN(total_volume) || total_volume==0.0) return null;
+                result.put("Total Volume", total_volume);
+                return result;
+            case 4:
+                result.put("Market Cap Rank", "#"+market_cap_rank);
+                return result;
+            case 5:
+                if(Double.isNaN(market_cap)) return null;
+                result.put("Market Cap", "$"+market_cap);
+                return result;
+            case 6:
+                if(Double.isNaN(circulating_supply) || circulating_supply==0.0) return null;
+                result.put("Circulating Supply", circulating_supply);
+                return result;
+            case 7:
+                if(Double.isNaN(total_supply) || total_supply==0.0) return null;
+                result.put("Total Supply", total_supply);
+                return result;
+            case 8:
+                if(Double.isNaN(max_supply) || max_supply==0.0) return null;
+                result.put("Max Supply", max_supply);
+                return result;
+            case 9:
+                if(Double.isNaN(fully_diluted_valuation) || fully_diluted_valuation==0.0) return null;
+                result.put("Fully Diluted Valuation", fully_diluted_valuation);
+                return result;
+            case 10:
+                if(Double.isNaN(ath) ||Double.isNaN(ath_change_percentage) || ath_date.isEmpty()) return null;
+                result.put("All-Time High", ath);
+                result.put("percentage ath",ath_change_percentage);
+                result.put("Date ath",ath_date);
+
+                return result;
+            case 11:
+                if(Double.isNaN(atl) ||Double.isNaN(atl_change_percentage) || atl_date.isEmpty()) return null;
+                result.put("All-Time Low", atl);
+                result.put("percentage atl",atl_change_percentage);
+                result.put("Date atl",atl_date);
+
+                return result;
+            default:
+                return null;
+        }
+    }
+
+    public List<HashMap<String,Object>> getListOfElementsForAdapter(){
+        List<HashMap<String,Object>> result = new LinkedList<>();
+
+        for(int i=1; i<sizeForList(); i++){
+            HashMap<String,Object> element = (HashMap<String, Object>) getElementForList(i);
+            if(element==null) result.add(null);
+            else result.add(element);
+        }
+
+        return result;
+    }
 
 
     public String getId () {
@@ -269,34 +347,28 @@ public class Coin{
         this.imageBytes = imageBytes;
     }
 
-    public static class Roi{
+    public static class Roi {
         private double times;
         private String currency;
         private double percentage;
 
-        public Roi(){}
+        public Roi () {
+        }
 
-        /*
-        protected Roi(Parcel in) {
-            this.times = in.readDouble();
-            this.currency = in.readString();
-            this.percentage = in.readDouble();
-        }*/
-
-        public double getTimes(){
+        public double getTimes () {
             return times;
         }
 
-        public void setTimes(double times){
+        public void setTimes (double times) {
             this.times = times;
         }
 
-        public String getCurrency(){
+        public String getCurrency () {
             return currency;
         }
 
-        public void setCurrency(String currency){
-            this.currency=currency;
+        public void setCurrency (String currency) {
+            this.currency = currency;
         }
 
         public double getPercentage () {
@@ -308,7 +380,7 @@ public class Coin{
         }
 
 
-        public String toJson() {
+        public String toJson () {
             try {
                 JSONObject jsonObject = new JSONObject()
                         .put("times", this.times)
@@ -321,81 +393,8 @@ public class Coin{
                 return null;
             }
         }
-
-        /*
-        @Override
-        public int describeContents () {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel (Parcel parcel, int i) {
-            parcel.writeDouble(this.times);
-            parcel.writeString(this.currency);
-            parcel.writeDouble(this.percentage);
-        }
-
-        public static final Parcelable.Creator<Roi> CREATOR = new Parcelable.Creator<Roi>() {
-            @Override
-            public Roi createFromParcel(Parcel source) {
-                return new Roi(source);
-            }
-
-            @Override
-            public Roi[] newArray(int size) {
-                return new Roi[size];
-            }
-        };*/
-
     }
 
-    /*
-    @Override
-    public int describeContents () {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int i) {
-        dest.writeString(this.id);
-        dest.writeString(this.symbol);
-        dest.writeString(this.name);
-        dest.writeString(this.image);
-        dest.writeDouble(this.current_price);
-        dest.writeDouble(this.market_cap);
-        dest.writeInt(this.market_cap_rank);
-        dest.writeDouble(this.fully_diluted_valuation);
-        dest.writeDouble(this.total_volume);
-        dest.writeDouble(this.high_24h);
-        dest.writeDouble(this.low_24h);
-        dest.writeDouble(this.price_change_24h);
-        dest.writeDouble(this.price_change_percentage_24h);
-        dest.writeDouble(this.market_cap_change_24h);
-        dest.writeDouble(this.market_cap_change_percentage_24h);
-        dest.writeDouble(this.circulating_supply);
-        dest.writeDouble(this.total_supply);
-        dest.writeDouble(this.max_supply);
-        dest.writeDouble(this.ath);
-        dest.writeDouble(this.ath_change_percentage);
-        dest.writeString(this.ath_date);
-        dest.writeDouble(this.atl);
-        dest.writeDouble(this.atl_change_percentage);
-        dest.writeString(this.atl_date);
-        dest.writeParcelable(this.roi, i);
-        dest.writeString(this.last_updated);
-        dest.writeByteArray(this.imageBytes);
-    }
-    public static final Parcelable.Creator<Coin> CREATOR = new Parcelable.Creator<Coin>() {
-        @Override
-        public Coin createFromParcel(Parcel source) {
-            return new Coin(source);
-        }
-
-        @Override
-        public Coin[] newArray(int size) {
-            return new Coin[size];
-        }
-    };*/
 
     @Override
     public String toString () {

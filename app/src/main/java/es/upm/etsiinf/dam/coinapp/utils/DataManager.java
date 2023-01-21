@@ -185,8 +185,6 @@ public class DataManager {
             coin.setImage(image);
             if(!image.isEmpty()) {
                 ImageManager imageManager = new ImageManager();
-                Log.wtf("ImageBytes", imageManager.toString());
-                Log.wtf("ImageBytes", image);
                 coin.setImageBitmap(imageManager.getBitmapFromURL(image));
                 coin.setImageBytes(imageManager.getBytesFromBitmap(coin.getImageBitmap()));
             }

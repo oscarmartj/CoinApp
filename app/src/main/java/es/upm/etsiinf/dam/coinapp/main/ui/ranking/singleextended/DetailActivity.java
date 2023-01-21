@@ -13,24 +13,36 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.VectorDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.icu.math.BigDecimal;
+import android.icu.text.Transliterator;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -40,11 +52,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.databinding.ActivityDetailBinding;
+import es.upm.etsiinf.dam.coinapp.main.ui.ranking.RankingAdapter;
+import es.upm.etsiinf.dam.coinapp.main.ui.ranking.RankingViewModel;
+import es.upm.etsiinf.dam.coinapp.main.ui.ranking.RankingViewModelFactory;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
@@ -54,6 +72,9 @@ public class DetailActivity extends AppCompatActivity {
 
     private ActivityDetailBinding binding;
     private Coin coin;
+    private ImageManager imageManager;
+    private int colorTextToolbar;
+    private InfoAdapter infoAdapter;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -61,6 +82,8 @@ public class DetailActivity extends AppCompatActivity {
 
         binding = ActivityDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        imageManager = new ImageManager();
 
         String idCoin = getIntent().getStringExtra("coin_id");
         this.coin = new Coin();
@@ -136,8 +159,42 @@ public class DetailActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
+
+        //ELEMENTOS DE LA CARDVIEW
+        confShapeIcon(binding.includeContentScrolling.ivLogoContentDetail, binding.includeContentScrolling.clCardone);
+        confHeaderText(binding.includeContentScrolling.nameCoinDetailInformation, binding.includeContentScrolling.marketcaprankCoinDetailInformation);
+
+
+        RecyclerView lv_marketInformation = binding.includeContentScrolling.lwMarketInformation;
+        List<Coin> coinl = new LinkedList<>();
+        try {
+            coinl.add(new CoinDB(this).getCoinByMarketCap(1));
+            coinl.add(new CoinDB(this).getCoinByMarketCap(2));
+            coinl.add(new CoinDB(this).getCoinByMarketCap(3));
+            coinl.add(new CoinDB(this).getCoinByMarketCap(4));
+            coinl.add(new CoinDB(this).getCoinByMarketCap(5));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        infoAdapter = new InfoAdapter(coin.getListOfElementsForAdapter());
+        lv_marketInformation.setAdapter(infoAdapter);
+        lv_marketInformation.setLayoutManager(new LinearLayoutManager(this));
+
+        Button btn_more_info = binding.includeContentScrolling.moreInfoBtn;
+
+        btn_more_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view) {
+                String url = "https://www.coingecko.com/en/coins/"+coin.getId();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+            }
+        });
+
+    }
 
 
     public void setTitleColor(CollapsingToolbarLayout collapsingToolbarLayout, Drawable overflowIcon, int color) {
@@ -145,10 +202,12 @@ public class DetailActivity extends AppCompatActivity {
         if (colorEsClaro(color)) {
             collapsingToolbarLayout.setCollapsedTitleTextColor(Color.BLACK);
             collapsingToolbarLayout.setExpandedTitleColor(Color.BLACK);
+            colorTextToolbar = Color.BLACK;
             overflowIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         } else {
             collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
             collapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
+            colorTextToolbar = Color.WHITE;
             overflowIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         }
     }
@@ -209,5 +268,34 @@ public class DetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return imagePath;
+    }
+
+    private void confShapeIcon(ShapeableImageView shapeableImageView, ConstraintLayout layout){
+        layout.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(imageManager.getLighterShade(imageManager.getDominantColor2(imageManager.getBitmapFromBLOB(coin.getImageBytes()))))));
+        //cuadrado blanco para fondo
+        ShapeDrawable square = new ShapeDrawable(new RectShape());
+        square.getPaint().setColor(Color.WHITE);
+        int[] dimensionsPx = imageManager.dimensionsDpToPx(48,48);
+        square.setBounds(0,0,dimensionsPx[0],dimensionsPx[1]);
+
+        shapeableImageView.setBackground(square);
+        shapeableImageView.setImageBitmap(imageManager.resizeImage(coin.getImageBytes(), 48,48));
+
+    }
+
+    private void confHeaderText (TextView nameCoinDetailInformation, TextView marketcaprankCoinDetailInformation) {
+        if(coin.getName().length()<15){
+            nameCoinDetailInformation.setText(coin.getName());
+        }else{
+            nameCoinDetailInformation.setText(coin.getSymbol().toUpperCase());
+        }
+        marketcaprankCoinDetailInformation.setText("#"+coin.getMarket_cap_rank());
+
+        //color
+        nameCoinDetailInformation.setTextColor(colorTextToolbar);
+        marketcaprankCoinDetailInformation.setTextColor(colorTextToolbar);
+        if(colorTextToolbar == Color.BLACK) {
+            nameCoinDetailInformation.setTypeface(null, Typeface.NORMAL); //cuando el texto es negro, queda mal la negrita.
+        }
     }
 }

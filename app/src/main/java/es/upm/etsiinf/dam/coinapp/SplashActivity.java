@@ -95,15 +95,8 @@ public class SplashActivity extends AppCompatActivity {
 
             //SEGUNDO TRABAJO Y QUE NO VA A SER INSTANTANEO, SINO PERIODICO Y PERSISTENTE
 
-            JobScheduler jobScheduler = getSystemService(JobScheduler.class);
-            JobInfo jobInfo = jobScheduler.getPendingJob(998);
-            if(jobInfo == null){ //que un nuevo trabajo no reemplace el que ya existe.
-                Log.i("jobInfo","entra aqui:");
-                UpdateScheduleJob job = new UpdateScheduleJob();
-                job.scheduleJob(this);
-            }
-
-
+            UpdateScheduleJob job = new UpdateScheduleJob();
+            job.scheduleJob(this);
         }
 
 

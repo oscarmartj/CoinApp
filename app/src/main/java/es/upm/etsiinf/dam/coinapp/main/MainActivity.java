@@ -45,15 +45,11 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        NotificationUtils nutils = new NotificationUtils();
+        nutils.createNotificationChannel(this); //crear canal de notificaciones
+        NotificationScheduleJob job = new NotificationScheduleJob();
+        job.scheduleJob(this);
 
-        JobScheduler jobScheduler = getSystemService(JobScheduler.class);
-        JobInfo jobInfo = jobScheduler.getPendingJob(999);
-        if(jobInfo == null){ //que un nuevo trabajo no reemplace el que ya existe.
-            NotificationUtils nutils = new NotificationUtils();
-            nutils.createNotificationChannel(this); //crear canal de notificaciones
-            NotificationScheduleJob job = new NotificationScheduleJob();
-            job.scheduleJob(this);
-        }
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.

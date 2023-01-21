@@ -112,7 +112,7 @@ public class NotificationService extends JobService {
                             notificationManager.notify(notificationID_resultado, builder.build());
                         }
 
-                        NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID_GROUP)
+                        NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID)
                                 .setSmallIcon(R.drawable.ic_staroff)
                                 .setContentTitle("Notificaciones de monedas")
                                 .setGroup(GROUP_NAME_COIN_NOTIFICATIONS)
