@@ -43,32 +43,14 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void loginDataChanged (String username, String email, String password) {
-        boolean isValid = true;
-        int errorUsername = 0;
-        int errorEmail = 0;
-        int errorPassword = 0;
-
-        if(!username.isEmpty() && !isUserNameValid(username)) {
-            Log.i("Flujo","if user");
-            isValid = false;
-            errorUsername = R.string.invalid_username_2;
-        }
-        if(!email.isEmpty() && !isEmailValid(email)){
-            Log.i("Flujo","if email");
-            isValid = false;
-            errorEmail = R.string.invalid_email;
-        }
-        if(!password.isEmpty() && !isPasswordValid(password)) {
-            Log.i("Flujo","if password");
-            isValid = false;
-            errorPassword = R.string.invalid_password;
-        }
-        if(isValid) {
-            Log.i("Flujo","if valid");
-            loginFormState.setValue(new LoginFormState(true));
+        if(!isUserNameValid(username)) {
+            loginFormState.setValue(new LoginFormState(R.string.invalid_username_2, null ,null));
+        } else if(!isEmailValid(email)){
+            loginFormState.setValue(new LoginFormState(null,R.string.invalid_email,null));
+        } else if(!isPasswordValid(password)) {
+            loginFormState.setValue(new LoginFormState(null, null, R.string.invalid_password));
         } else {
-            Log.i("Flujo","if erorr");
-            loginFormState.setValue(new LoginFormState(errorUsername==0?null:errorUsername,errorEmail==0?null:errorEmail,errorPassword==0?null:errorPassword));
+            loginFormState.setValue(new LoginFormState(true));
         }
     }
 
