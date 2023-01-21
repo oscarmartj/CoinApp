@@ -167,17 +167,6 @@ public class DetailActivity extends AppCompatActivity {
 
 
         RecyclerView lv_marketInformation = binding.includeContentScrolling.lwMarketInformation;
-        List<Coin> coinl = new LinkedList<>();
-        try {
-            coinl.add(new CoinDB(this).getCoinByMarketCap(1));
-            coinl.add(new CoinDB(this).getCoinByMarketCap(2));
-            coinl.add(new CoinDB(this).getCoinByMarketCap(3));
-            coinl.add(new CoinDB(this).getCoinByMarketCap(4));
-            coinl.add(new CoinDB(this).getCoinByMarketCap(5));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         infoAdapter = new InfoAdapter(coin.getListOfElementsForAdapter());
         lv_marketInformation.setAdapter(infoAdapter);
         lv_marketInformation.setLayoutManager(new LinearLayoutManager(this));

@@ -52,6 +52,7 @@ import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationScheduleJo
 import es.upm.etsiinf.dam.coinapp.services.updates.UpdateWorker;
 import es.upm.etsiinf.dam.coinapp.services.updates.job.UpdateScheduleJob;
 import es.upm.etsiinf.dam.coinapp.ui.login.LoginActivity;
+import es.upm.etsiinf.dam.coinapp.utils.ConnectionManager;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.TokenManager;
 
@@ -104,11 +105,22 @@ public class SplashActivity extends AppCompatActivity {
         if(!isConnected() && !hasData()){
             logoImageView.setVisibility(View.INVISIBLE);
             noInternetTW.setVisibility(View.VISIBLE);
-            connectionCheck(); //espera hasta que tenga conexión
+            ConnectionManager.connectionCheck(this, new ConnectionManager.OnConnectionCallback() {
+                @Override
+                public void onConnectionCallback () {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run () {
+                            recreate();
+                        }
+                    });
+
+                }
+            }); //espera hasta que tenga conexión
         }else if(!isConnected() && hasData()){ //Si no tiene conexión a internet pero si que tiene datos en la db para poder mostrar offline.
             //Si esta logueado
             if(userIsLoggedIn()){
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
                 //Sino esta logueado
@@ -203,7 +215,9 @@ public class SplashActivity extends AppCompatActivity {
         return tamanyo_db > 0;
     }
 
+    /*
     private void connectionCheck(){
+        Class splashActivityClass = SplashActivity.class;
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkRequest networkRequest = new NetworkRequest.Builder()
                 .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
@@ -218,6 +232,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
-    }
+    }*/
 }
 

@@ -4,9 +4,14 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.icu.math.BigDecimal;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Patterns;
@@ -27,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import es.upm.etsiinf.dam.coinapp.SplashActivity;
 import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 

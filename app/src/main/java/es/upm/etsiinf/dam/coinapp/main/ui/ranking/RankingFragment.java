@@ -4,6 +4,7 @@ import android.content.Context;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +20,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
+import es.upm.etsiinf.dam.coinapp.SplashActivity;
 import es.upm.etsiinf.dam.coinapp.databinding.FragmentRankingBinding;
 import es.upm.etsiinf.dam.coinapp.main.MainActivity;
 import es.upm.etsiinf.dam.coinapp.main.ui.ranking.singleextended.DetailActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
+import es.upm.etsiinf.dam.coinapp.utils.ConnectionManager;
 
 
 public class RankingFragment extends Fragment {
@@ -90,10 +93,12 @@ public class RankingFragment extends Fragment {
 
         rankingViewModel.getInternet().observe(getViewLifecycleOwner(), isInternet -> {
             if(isInternet.equalsIgnoreCase("NO")){
+                Log.i("RankingInternet","aqui entra en el observer");
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(context, "No hay conexión a internet para actualizar los datos", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "No hay conexión a internet para actualizar los datos", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         return root;
     }

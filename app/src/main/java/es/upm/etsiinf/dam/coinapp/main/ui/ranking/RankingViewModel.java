@@ -44,6 +44,7 @@ public class RankingViewModel extends ViewModel {
         if(isConnected()) {
             noInternet.setValue("OK");
         } else {
+            Log.i("RankingInternet","aqui entra");
             noInternet.setValue("NO");
         }
         loadMoreCoins();
@@ -128,12 +129,8 @@ public class RankingViewModel extends ViewModel {
                         isRefreshing.postValue(false);
                         break;
                     case 1: //ERROR
-                        isRefreshing.postValue(false);
-                        /*
-                        if(!msg.obj.toString().isEmpty() && msg.obj.toString().equalsIgnoreCase("Error")){
-                            noInternet.postValue("NO");
-                            isRefreshing.setValue(false);
-                        }*/
+                        isRefreshing.setValue(false);
+
                         break;
                 }
             }
@@ -142,7 +139,8 @@ public class RankingViewModel extends ViewModel {
         if(isConnected){
             new Thread(new CoinGeckoThread(this.coins.getValue(),handlerRefreshing)).start();
         }else{
-            handler.sendMessage(handler.obtainMessage(1, "Error"));
+            handlerRefreshing.sendMessage(handler.obtainMessage(1, "Error"));
+
         }
 
     }

@@ -30,6 +30,7 @@ import es.upm.etsiinf.dam.coinapp.databinding.ActivityMainBinding;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationScheduleJob;
 import es.upm.etsiinf.dam.coinapp.services.updates.job.UpdateScheduleJob;
+import es.upm.etsiinf.dam.coinapp.utils.ConnectionManager;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
 import es.upm.etsiinf.dam.coinapp.utils.KeyboardUtil;
 import es.upm.etsiinf.dam.coinapp.utils.NotificationUtils;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Context context = this;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -60,5 +62,17 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+        ConnectionManager.connectionCheck(this, new ConnectionManager.OnConnectionCallback() {
+            @Override
+            public void onConnectionCallback () {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run () {
+                        Intent intent = new Intent(context, SplashActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
     }
 }
