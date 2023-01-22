@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -32,9 +34,11 @@ public class RankingViewModel extends ViewModel {
     private final Context context;
     private MutableLiveData<String> noInternet;
     private CoinDB coinDB;
+    private ProgressBar progressBar;
 
-    public RankingViewModel (Context context) {
+    public RankingViewModel (Context context, ProgressBar progressBar) {
         this.context=context;
+        this.progressBar = progressBar;
         coinDB = new CoinDB(context);
         coins = new MutableLiveData<>();
         coins.setValue(new LinkedList<>());
@@ -65,7 +69,6 @@ public class RankingViewModel extends ViewModel {
 
     public void loadMoreCoins (boolean connected) {
         if(isLoading) {
-            return;
         } else {
             this.handler = new Handler(Looper.getMainLooper()) {
                 @Override
@@ -74,7 +77,6 @@ public class RankingViewModel extends ViewModel {
                         case 0: //OK
                             List<Coin> newCoins = (List<Coin>)msg.obj;
                             if(newCoins != null){
-                                Log.i("newCoins",newCoins.toString());
                                 try {
                                     coinDB.insertCoins(newCoins);
                                 } catch (IOException e) {
@@ -87,7 +89,6 @@ public class RankingViewModel extends ViewModel {
                                 int currentSize = currentCoins.size();
                                 currentCoins.addAll(newCoins);
                                 coins.setValue(currentCoins);
-                                Log.i("NewCoins","Coins final ->"+currentCoins.toString());
                             }
                             isLoading = false;
                             page++;
@@ -98,8 +99,10 @@ public class RankingViewModel extends ViewModel {
                     }
                 }
             };
-            isLoading = true;
+            isLoading=true;
+            progressBar.setVisibility(View.VISIBLE);
             if(connected){
+                progressBar.setVisibility(View.VISIBLE);
                 CoinGeckoThread coinGeckoThread = new CoinGeckoThread(this.page, handler);
                 new Thread(coinGeckoThread).start();
             }else{
@@ -123,17 +126,12 @@ public class RankingViewModel extends ViewModel {
                 switch (msg.what) {
                     case 0: //OK
                         List<Coin> newCoins = (List<Coin>)msg.obj;
-                        Log.i("updateCoins",newCoins.toString());
                         coins.postValue(newCoins);
                         isRefreshing.postValue(false);
                         break;
                     case 1: //ERROR
-                        isRefreshing.postValue(false);
-                        /*
-                        if(!msg.obj.toString().isEmpty() && msg.obj.toString().equalsIgnoreCase("Error")){
-                            noInternet.postValue("NO");
-                            isRefreshing.setValue(false);
-                        }*/
+                        isRefreshing.setValue(false);
+
                         break;
                 }
             }
@@ -142,7 +140,8 @@ public class RankingViewModel extends ViewModel {
         if(isConnected){
             new Thread(new CoinGeckoThread(this.coins.getValue(),handlerRefreshing)).start();
         }else{
-            handler.sendMessage(handler.obtainMessage(1, "Error"));
+            handlerRefreshing.sendMessage(handler.obtainMessage(1, "Error"));
+
         }
 
     }

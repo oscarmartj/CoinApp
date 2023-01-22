@@ -1,9 +1,7 @@
 package es.upm.etsiinf.dam.coinapp.utils;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,10 +11,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
-import android.util.Log;
 
-import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.media.FaceDetector;
 import android.media.FaceDetector.Face;
@@ -31,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -39,7 +33,6 @@ import java.util.Map;
 
 import es.upm.etsiinf.dam.coinapp.R;
 
-//Bitmap bitmap1 = imageManager1.getBitmapFromURL();
 public class ImageManager {
 
     public ImageManager () {
@@ -71,7 +64,6 @@ public class ImageManager {
     }
 
     public Bitmap getBitmapFromBLOB (byte[] image) {
-        Log.wtf("bitmapblob", "aqui");
         InputStream inputStream = new ByteArrayInputStream(image);
         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
         return bitmap;
@@ -148,6 +140,20 @@ public class ImageManager {
         }
         return String.format("#%06X", (0xFFFFFF & dominantColor));
     }
+
+    public String getLighterShade(String colorHex) {
+        int color = Color.parseColor(colorHex);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        red = (int) Math.min(red * 1.35, 255);
+        green = (int) Math.min(green * 1.35, 255);
+        blue = (int) Math.min(blue * 1.35, 255);
+        int lighterColor = Color.rgb(red, green, blue);
+        return String.format("#%06X", (0xFFFFFF & lighterColor));
+    }
+
+
 
     public File profileImageWithFilter(Context context, Bitmap bitmap, String username){
 
@@ -259,6 +265,36 @@ public class ImageManager {
             return scaledBitmap;
         }
     }
+
+    public Bitmap resizeImage(byte[] imageData, int widthDp, int heightDp) {
+        // Convertimos las dimensiones en pixels
+        float density = Resources.getSystem().getDisplayMetrics().density;
+        int widthPx = (int) (widthDp * density);
+        int heightPx = (int) (heightDp * density);
+
+        // Crea un Bitmap a partir de los datos de la imagen
+        Bitmap originalBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+
+        // Redimensiona el Bitmap a las dimensiones deseadas
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, widthPx, heightPx, false);
+
+        // Libera la memoria del bitmap original
+        originalBitmap.recycle();
+
+        return resizedBitmap;
+    }
+
+    public int[] dimensionsDpToPx(int widthDp, int heightDp){
+        float density = Resources.getSystem().getDisplayMetrics().density;
+        int widthPx = (int) (widthDp * density);
+        int heightPx = (int) (heightDp * density);
+
+        return new int[]{widthPx,heightPx};
+    }
+
+
+
+
 
 
 }

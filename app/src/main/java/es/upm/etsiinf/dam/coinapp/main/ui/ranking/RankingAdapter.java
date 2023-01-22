@@ -1,7 +1,9 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.ranking;
 
 import android.content.Context;
-import android.icu.math.BigDecimal;
+import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -11,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +28,7 @@ import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
 public class RankingAdapter extends BaseAdapter {
 
     List<Coin> coins = new LinkedList<>();
+    ImageManager im = new ImageManager();
     @Override
     public int getCount () {
         return coins.size();
@@ -52,7 +57,7 @@ public class RankingAdapter extends BaseAdapter {
         }
 
         TextView textViewMarketCapRank = view.findViewById(R.id.textViewMarketcapRank_coin);
-        ImageView imageView = view.findViewById(R.id.imageView_coin);
+        ShapeableImageView imageView = view.findViewById(R.id.imageView_coin);
         TextView textViewName = view.findViewById(R.id.textViewName_coin);
         TextView textViewPrice = view.findViewById(R.id.textViewPrice_coin);
         TextView textViewPercentage = view.findViewById(R.id.textViewPercentage_coin);
@@ -60,12 +65,29 @@ public class RankingAdapter extends BaseAdapter {
 
         textViewMarketCapRank.setText(coin.getMarket_cap_rank()+"");
 
+        //margenes, modificalo segun el numero sea mayor o menor
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) textViewMarketCapRank.getLayoutParams();
+        if(coin.getMarket_cap_rank()>=10){
+            layoutParams.setMarginEnd(0);
+            textViewMarketCapRank.setLayoutParams(layoutParams);
+        }else{
+            layoutParams.setMarginEnd(15);
+            textViewMarketCapRank.setLayoutParams(layoutParams);
+        }
+
+        ShapeDrawable square = new ShapeDrawable(new RectShape());
+        square.getPaint().setColor(Color.WHITE);
+        int[] dimensionsPx = im.dimensionsDpToPx(48,48);
+        square.setBounds(0,0,dimensionsPx[0],dimensionsPx[1]);
+
+        imageView.setBackground(square);
+
         if(isConnected(view.getContext())){
-            imageView.setImageBitmap(coin.getImageBitmap());
+            imageView.setImageBitmap(im.getBitmapFromBLOB(coin.getImageBytes()));
         }else{
             imageView.setImageBitmap(new ImageManager().getBitmapFromBLOB(coin.getImageBytes()));
         }
-        textViewName.setText(coin.getSymbol());
+        textViewName.setText(coin.getSymbol().toUpperCase());
 
         int firstPositionWithout0 = DataManager.obtenerPrimeraPosicionDecimal(coin.getCurrent_price());
         if(firstPositionWithout0>2){

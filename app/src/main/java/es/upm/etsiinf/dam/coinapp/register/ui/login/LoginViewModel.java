@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.util.Log;
 import android.util.Patterns;
 
 import es.upm.etsiinf.dam.coinapp.R;
@@ -61,7 +62,7 @@ public class LoginViewModel extends ViewModel {
         if(email.contains("@")) {
             return Patterns.EMAIL_ADDRESS.matcher(email).matches();
         } else {
-            return !email.trim().isEmpty();
+            return false;
         }
     }
 

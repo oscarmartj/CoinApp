@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import es.upm.etsiinf.dam.coinapp.main.ui.ranking.RankingViewModel;
-
 public class ProfileViewModelFactory implements ViewModelProvider.Factory {
     private final Context context;
     private final SharedPreferences sharedPreferences;

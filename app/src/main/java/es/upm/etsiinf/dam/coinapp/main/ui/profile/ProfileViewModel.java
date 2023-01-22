@@ -8,12 +8,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.security.NoSuchAlgorithmException;
-
 import es.upm.etsiinf.dam.coinapp.database.functions.UserDB;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.utils.ImageManager;
-import es.upm.etsiinf.dam.coinapp.utils.Security;
 
 public class ProfileViewModel extends ViewModel {
 

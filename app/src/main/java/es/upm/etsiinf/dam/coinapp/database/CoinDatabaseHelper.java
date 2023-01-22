@@ -1,10 +1,8 @@
 package es.upm.etsiinf.dam.coinapp.database;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;

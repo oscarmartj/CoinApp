@@ -30,7 +30,6 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
     private boolean reset=false;
 
     public MagicViewModel (Context context, SensorManager mSensorManager, Sensor mAccelerometer, BallView view) {
-        Log.i("magicC","entra aqui");
         this.context = context;
         this.coinDB = new CoinDB(context);
         this.mSensorManager = mSensorManager;
@@ -50,7 +49,7 @@ public class MagicViewModel extends ViewModel implements SensorEventListener {
 
     private Coin getRandomCoin (CoinDB coinDB) {
         int numCoinsInDB = coinDB.getNumOfRecords();
-        //Get random number to show random coin
+
         SecureRandom secureRandom = new SecureRandom(); //he querido utilizar securerandom en vez de la clase random, es mas seguro por lo visto.
         int randomNumber = secureRandom.nextInt(numCoinsInDB)+1; //entre 1....numCoinsInDB
         Coin coin = new Coin();

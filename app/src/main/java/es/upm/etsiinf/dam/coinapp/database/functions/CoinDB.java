@@ -134,7 +134,6 @@ public class CoinDB {
 
         for (Coin coin : coins) {
             if(countCoinById(coin.getId())==0){
-                Log.i("updateWorker",coin.getId()+": "+countCoinById(coin.getId()));
                 ContentValues values = new ContentValues();
                 values.put(COLUMN_ID, coin.getId());
                 values.put(COLUMN_SYMBOL, coin.getSymbol());
@@ -170,7 +169,6 @@ public class CoinDB {
 
                 valuesList.add(values);
             }else{
-                Log.i("updateWorker",coin.getId()+": toUpdate");
                 toUpdate.add(coin);
             }
 
@@ -374,8 +372,6 @@ public class CoinDB {
             cursor.close();
         }
 
-
-        Log.i("ResultCoin",result.toString());
         return result;
     }
 
@@ -390,8 +386,20 @@ public class CoinDB {
                 COLUMN_CURRENT_PRICE,
                 COLUMN_MARKET_CAP,
                 COLUMN_MARKET_CAP_RANK,
-                COLUMN_PRICE_CHANGE_PERCENTAGE_24H
-                // Otros campos omitidos
+                COLUMN_PRICE_CHANGE_PERCENTAGE_24H,
+                COLUMN_HIGH_24H,
+                COLUMN_LOW_24H,
+                COLUMN_TOTAL_VOLUME,
+                COLUMN_CIRCULATING_SUPPLY,
+                COLUMN_TOTAL_SUPPLY,
+                COLUMN_MAX_SUPPLY,
+                COLUMN_FULLY_DILUTED_VALUATION,
+                COLUMN_ATH,
+                COLUMN_ATH_CHANGE_PERCENTAGE,
+                COLUMN_ATH_DATE,
+                COLUMN_ATL,
+                COLUMN_ATL_CHANGE_PERCENTAGE,
+                COLUMN_ATL_DATE
         };
 
         String selection = COLUMN_MARKET_CAP_RANK + " BETWEEN ? AND ?";
@@ -416,6 +424,19 @@ public class CoinDB {
             double marketCap = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_MARKET_CAP));
             int marketCapRank = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MARKET_CAP_RANK));
             double percentage = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRICE_CHANGE_PERCENTAGE_24H));
+            double high_24h = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_HIGH_24H));
+            double low_24h = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_LOW_24H));
+            double total_volume = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_TOTAL_VOLUME));
+            double circulating_supply = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_CIRCULATING_SUPPLY));
+            double total_supply = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_TOTAL_SUPPLY));
+            double max_supply = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_MAX_SUPPLY));
+            double fully_diluted_valuation = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_FULLY_DILUTED_VALUATION));
+            double ath = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_ATH));
+            double ath_change_percentage = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_ATH_CHANGE_PERCENTAGE));
+            String ath_date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATH_DATE));
+            double atl = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_ATL));
+            double atl_change_percentage = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_ATL_CHANGE_PERCENTAGE));
+            String atl_date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATL_DATE));
 
             Coin coin = new Coin();
             coin.setId(id);
@@ -426,6 +447,20 @@ public class CoinDB {
             coin.setMarket_cap(marketCap);
             coin.setMarket_cap_rank(marketCapRank);
             coin.setPrice_change_percentage_24h(percentage);
+            coin.setHigh_24h(high_24h);
+            coin.setLow_24h(low_24h);
+            coin.setTotal_volume(total_volume);
+            coin.setCirculating_supply(circulating_supply);
+            coin.setTotal_supply(total_supply);
+            coin.setMax_supply(max_supply);
+            coin.setFully_diluted_valuation(fully_diluted_valuation);
+            coin.setAth(ath);
+            coin.setAth_change_percentage(ath_change_percentage);
+            coin.setAth_date(ath_date);
+            coin.setAtl(atl);
+            coin.setAtl_change_percentage(atl_change_percentage);
+            coin.setAtl_date(atl_date);
+
             coins.add(coin);
         }
         return coins;

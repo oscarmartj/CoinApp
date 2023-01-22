@@ -7,7 +7,6 @@ import android.content.Context;
 
 import java.util.concurrent.TimeUnit;
 
-import es.upm.etsiinf.dam.coinapp.services.notificaciones.NotificationService;
 
 public class UpdateScheduleJob {
     private static final int UPDATE_JOB_ID=998;

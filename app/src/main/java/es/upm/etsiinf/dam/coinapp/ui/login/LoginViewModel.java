@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Patterns;
-
 import java.util.regex.Pattern;
 
 import es.upm.etsiinf.dam.coinapp.data.LoginRepository;
@@ -62,7 +60,7 @@ public class LoginViewModel extends ViewModel {
             Pattern pattern = Pattern.compile("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]+(\\.[a-zA-Z]+)?$");
             return pattern.matcher(username).matches();
         } else {
-            return !username.trim().isEmpty();
+            return false;
         }
     }
 

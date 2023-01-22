@@ -1,7 +1,6 @@
 package es.upm.etsiinf.dam.coinapp.services.notificaciones;
 
 import static es.upm.etsiinf.dam.coinapp.utils.NotificationUtils.CHANNEL_ID;
-import static es.upm.etsiinf.dam.coinapp.utils.NotificationUtils.CHANNEL_ID_GROUP;
 import static es.upm.etsiinf.dam.coinapp.utils.NotificationUtils.GROUP_NAME_COIN_NOTIFICATIONS;
 import static es.upm.etsiinf.dam.coinapp.utils.NotificationUtils.NOTIFICATION_COINS_GROUP_ID;
 import static es.upm.etsiinf.dam.coinapp.utils.NotificationUtils.NOTIFICATION_ID;
@@ -18,10 +17,8 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -30,7 +27,6 @@ import java.util.Locale;
 
 import es.upm.etsiinf.dam.coinapp.AsyncTask.NotificationCoinsThread;
 import es.upm.etsiinf.dam.coinapp.R;
-import es.upm.etsiinf.dam.coinapp.main.MainActivity;
 import es.upm.etsiinf.dam.coinapp.main.ui.ranking.singleextended.DetailActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 import es.upm.etsiinf.dam.coinapp.utils.DataManager;
@@ -58,7 +54,6 @@ public class NotificationService extends JobService {
                         coins.sort(Comparator.comparingInt(Coin::getMarket_cap_rank));
 
                         StringBuilder ids = new StringBuilder();
-                        Log.i("scheduleJob", "final coins" + coins.toString());
                         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                         for (Coin coin : coins) {
                             NotificationUtils nu = new NotificationUtils();
@@ -112,7 +107,7 @@ public class NotificationService extends JobService {
                             notificationManager.notify(notificationID_resultado, builder.build());
                         }
 
-                        NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID_GROUP)
+                        NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID)
                                 .setSmallIcon(R.drawable.ic_staroff)
                                 .setContentTitle("Notificaciones de monedas")
                                 .setGroup(GROUP_NAME_COIN_NOTIFICATIONS)
@@ -131,7 +126,6 @@ public class NotificationService extends JobService {
 
     @Override
     public boolean onStopJob (JobParameters jobParameters) {
-        Log.i("scheduleJob","entra en onStopJob");
         return true;
     }
 
