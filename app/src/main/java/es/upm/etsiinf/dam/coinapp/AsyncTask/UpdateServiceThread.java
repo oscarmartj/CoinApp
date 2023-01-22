@@ -1,8 +1,5 @@
 package es.upm.etsiinf.dam.coinapp.AsyncTask;
 
-import android.os.Handler;
-import android.os.Message;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 

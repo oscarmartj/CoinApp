@@ -29,22 +29,16 @@ public class UserDB {
 
 
     public boolean insertUser (String username, String password, String email, byte[] profileImage) throws NoSuchAlgorithmException {
-        // Obtiene la base de datos en modo escritura
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Crea un nuevo mapa de valores donde se almacenarán los valores
         ContentValues values = new ContentValues();
-
-        // Cifra la contraseña utilizando el algoritmo SHA-256
         password = security.encryptPassword(password);
 
-        // Asigna valores a las columnas
         values.put(COLUMN_USERNAME, username);
         values.put(COLUMN_PASSWORD, password);
         values.put(COLUMN_EMAIL, email);
         values.put(COLUMN_PROFILEIMAGE,profileImage);
 
-        // Inserta un nuevo registro en la tabla
         long rowId = db.insert(TABLE_NAME_USERS, null, values);
         Log.i("RegisterActivity", "rowId="+rowId);
         db.close();
@@ -52,29 +46,23 @@ public class UserDB {
     }
 
     public void updateUser(User user, String last_email) {
-        // Obtiene la base de datos en modo escritura
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Crea un nuevo mapa de valores donde se almacenará la imagen
         ContentValues values = new ContentValues();
         values.put(COLUMN_USERNAME,user.getUsername());
         values.put(COLUMN_EMAIL,user.getEmail());
         values.put(COLUMN_PROFILEIMAGE, user.getProfileImage());
 
-        // Actualiza el registro de la tabla de usuarios con el email especificado
         db.update(TABLE_NAME_USERS, values, COLUMN_EMAIL + "= ?", new String[] { last_email });
         db.close();
     }
 
     public void updatePassword(User user) {
-        // Obtiene la base de datos en modo escritura
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Crea un nuevo mapa de valores donde se almacenará la imagen
         ContentValues values = new ContentValues();
         values.put(COLUMN_PASSWORD,user.getPassword());
 
-        // Actualiza el registro de la tabla de usuarios con el email especificado
         db.update(TABLE_NAME_USERS, values, COLUMN_EMAIL + "= ?", new String[] { user.getEmail() });
         db.close();
     }

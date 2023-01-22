@@ -1,28 +1,18 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.magic;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -32,16 +22,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import org.json.JSONException;
-
-import java.security.SecureRandom;
 import java.util.Locale;
 
 import es.upm.etsiinf.dam.coinapp.R;
@@ -169,9 +153,6 @@ public class MagicFragment extends Fragment {
 
 
 
-
-
-        //if(viewBall.getVisibility() != View.INVISIBLE){
         magicViewModel.getNumVisibleBalls().observe(getViewLifecycleOwner(), integer -> {
             if(integer ==0){
                 viewBall.setVisibility(View.INVISIBLE);

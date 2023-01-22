@@ -2,39 +2,24 @@ package es.upm.etsiinf.dam.coinapp.utils;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.icu.math.BigDecimal;
 import android.icu.text.NumberFormat;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.Patterns;
-
-import androidx.work.impl.WorkDatabase;
-import androidx.work.impl.model.WorkSpec;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import es.upm.etsiinf.dam.coinapp.SplashActivity;
-import es.upm.etsiinf.dam.coinapp.database.functions.CoinDB;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
 
 public class DataManager {
@@ -106,7 +91,6 @@ public class DataManager {
         String titulo = "¿Como ha cambiado " + coin.getName() + " " + dollarHashtagSymbol + coin.getSymbol().toUpperCase() + "?" + "\n";
         String cambio24h = "1 " + symbolCoin + " = " + currentPrice + " " + (percentage > 0.0 ? "+" + percentage + "%" : percentage + "%") + " " + (percentage < 0.0 ? redCircle + "\n" : greenCircle + "\n");
         String detalles = "Detalles:\n";
-        Log.i("precisionCambio", DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h()) + " precio: " + coin.getPrice_change_24h());
         String cambio = "Cambio: " + (new BigDecimal(coin.getPrice_change_24h()).toString().charAt(0) == '-' ? redCircle : greenCircle + "+") + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getPrice_change_24h())) + "f", coin.getPrice_change_24h()) + dollarHashtagSymbol + "\n";
         String low24h = "Precio más bajo (24h) = " + dollarHashtagSymbol + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getLow_24h())) + "f", coin.getLow_24h()) + low24hWhatEmoji + "\n";
         String high24h = "Precio más alto (24h) = " + dollarHashtagSymbol + String.format(Locale.US, "%,." + (DataManager.obtenerPrecisionFormato(coin.getHigh_24h())) + "f", coin.getHigh_24h()) + high24WhatEmoji + "\n";
@@ -337,7 +321,6 @@ public class DataManager {
     public static String scientificToNormalNotation(String number) {
         if (number != null && number.toString().contains("E-")) {
             BigDecimal bd = new BigDecimal(Double.parseDouble(number));
-            Log.i("formateoOK", "bd: "+bd.toString());
             return bd.toString();
         } else {
             return "";

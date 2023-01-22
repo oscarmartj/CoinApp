@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import es.upm.etsiinf.dam.coinapp.main.ui.ranking.RankingViewModel;
-
 public class MagicViewModelFactory implements ViewModelProvider.Factory {
     private final Context context;
     private SensorManager mSensorManager;

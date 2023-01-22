@@ -16,8 +16,6 @@ import java.security.NoSuchAlgorithmException;
 
 import es.upm.etsiinf.dam.coinapp.R;
 import es.upm.etsiinf.dam.coinapp.database.functions.UserDB;
-import es.upm.etsiinf.dam.coinapp.databinding.ActivityEditBinding;
-import es.upm.etsiinf.dam.coinapp.databinding.ActivityEditpasswordBinding;
 import es.upm.etsiinf.dam.coinapp.modelos.User;
 import es.upm.etsiinf.dam.coinapp.utils.Security;
 

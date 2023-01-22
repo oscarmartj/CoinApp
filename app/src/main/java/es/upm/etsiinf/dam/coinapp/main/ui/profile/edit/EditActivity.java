@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
-import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -144,9 +142,7 @@ public class EditActivity extends AppCompatActivity {
         });
 
         launcherCamera = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            Log.i("CameraLauncher","entra aqui -1");
             if (result.getResultCode() == RESULT_OK) {
-                Log.i("CameraLauncher","entra aqui");
                 Bitmap selectedImageBitmap = null;
                 try {
                     selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), cam_uri);
@@ -332,7 +328,6 @@ public class EditActivity extends AppCompatActivity {
 
         toolbar.setOnMenuItemClickListener(menuItem -> {
             if(menuItem.getItemId() == R.id.editprofile_menu_option) {
-                Log.i("ClickSave","here");
                 if(user_layout.getError() != null || email_layout.getError() != null){
                     Toast.makeText(this, "Changes could not be saved.", Toast.LENGTH_SHORT).show();
                     setFlagNoEdit(false);

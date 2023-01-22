@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         Context context = MainActivity.this;
         connectionManager = new ConnectionManager(MainActivity.this);
 
+        //ACTUALIZAR CONEXIÓN ENTRE SI O NO, ESTA PENDIENTE
         connectionManager.connectionCheck(()-> runOnUiThread(() -> {
 
             Intent intent = new Intent(context, SplashActivity.class);
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         job.scheduleJob(this);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_ranking, R.id.navigation_magic, R.id.navigation_profile)
                 .build();
@@ -58,48 +59,4 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-    /*
-    private void connectionCheck(Context context, OnNetworkStatusCallback onNetworkStatusCallback){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-                .build();
-
-        ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
-            @Override
-            public void onAvailable(Network network) {
-                if(!isConnected){
-                    onNetworkStatusCallback.onNetworkStatusCallback();
-                    isConnected=true;
-                }
-            }
-
-            @Override
-            public void onUnavailable () {
-                isConnected=false;
-            }
-
-            @Override
-            public void onLost (@NonNull Network network) {
-                isConnected=false;
-                onNetworkStatusCallback.onNetworkStatusCallback();
-
-            }
-        };
-
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
-    }
-
-    private boolean isConnected(){
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        return isConnected;
-    }
-
-    public interface OnNetworkStatusCallback{
-        void onNetworkStatusCallback();
-    }*/
 }

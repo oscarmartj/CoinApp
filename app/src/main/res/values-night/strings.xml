@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="recordar_inicio_de_sesi_n">Recordar inicio de sesión</string>
+    <string name="recordar_inicio_de_sesi_n">Remember</string>
     <string name="iniciar_sesion_tras_registro">¡Se ha registrado correctamente! Inicie sesión ahora</string>
     <string name="market_information">Market Information</string>
+    <string name="large_text">Large text</string>
     <string-array name="photo_options">
         <item>Take photo</item>
         <item>Choose existing photo</item>

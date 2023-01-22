@@ -134,7 +134,6 @@ public class CoinDB {
 
         for (Coin coin : coins) {
             if(countCoinById(coin.getId())==0){
-                Log.i("updateWorker",coin.getId()+": "+countCoinById(coin.getId()));
                 ContentValues values = new ContentValues();
                 values.put(COLUMN_ID, coin.getId());
                 values.put(COLUMN_SYMBOL, coin.getSymbol());
@@ -170,7 +169,6 @@ public class CoinDB {
 
                 valuesList.add(values);
             }else{
-                Log.i("updateWorker",coin.getId()+": toUpdate");
                 toUpdate.add(coin);
             }
 
@@ -374,8 +372,6 @@ public class CoinDB {
             cursor.close();
         }
 
-
-        Log.i("ResultCoin",result.toString());
         return result;
     }
 

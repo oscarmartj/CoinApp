@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.icu.math.BigDecimal;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;

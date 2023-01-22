@@ -55,8 +55,6 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.ViewHolder> {
     public void onBindViewHolder (@NonNull InfoAdapter.ViewHolder holder, int position) {
         HashMap element = coinList.get(position);
 
-        Log.i("position",position+"");
-        Log.i("position",coinList.size()+" size");
         if(position<9){
             if((position==0 || position==2 || position==4 || position==8) && element != null){
                 HashMap<String, Double> toInsert = (HashMap<String, Double>) element;
@@ -70,9 +68,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.ViewHolder> {
                 }
                 String format="";
                 if(numero.contains("E-")){
-                    Log.i("formateoOK",numero);
                     format = DataManager.scientificToNormalNotation(numero);
-                    Log.i("formateoOK","2: "+format);
                 }else if(numero.contains("E") && !numero.contains("E-")){
                     format = DataManager.formateoExponentePositivo(Double.valueOf(numero));
                 }
@@ -160,7 +156,6 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.ViewHolder> {
             }
             
         }else{
-            Log.i("position",position+"");
             if(element!=null){
                 if(position==9){
                     HashMap<String, Object> toInsert = (HashMap<String, Object>) element;

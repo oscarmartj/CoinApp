@@ -11,7 +11,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 
 
@@ -68,9 +67,7 @@ public class MagicActivity extends Activity implements SensorEventListener {
         }
 
         mBallView.countVisibleBalls();
-        Log.i("visibleBalls",mBallView.getVisibleBalls()+"");
         if(mBallView.getVisibleBalls()==0) {
-            Log.i("visibleBalls", "entra aqui");
             mSensorManager.unregisterListener(this);
         }
     }

@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Patterns;
-
 import java.util.regex.Pattern;
 
 import es.upm.etsiinf.dam.coinapp.data.LoginRepository;

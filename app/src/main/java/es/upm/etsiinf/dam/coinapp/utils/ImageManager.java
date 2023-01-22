@@ -11,7 +11,6 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import android.graphics.PointF;
 import android.media.FaceDetector;
@@ -34,7 +33,6 @@ import java.util.Map;
 
 import es.upm.etsiinf.dam.coinapp.R;
 
-//Bitmap bitmap1 = imageManager1.getBitmapFromURL();
 public class ImageManager {
 
     public ImageManager () {
@@ -66,7 +64,6 @@ public class ImageManager {
     }
 
     public Bitmap getBitmapFromBLOB (byte[] image) {
-        Log.wtf("bitmapblob", "aqui");
         InputStream inputStream = new ByteArrayInputStream(image);
         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
         return bitmap;

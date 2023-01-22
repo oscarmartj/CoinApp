@@ -1,8 +1,6 @@
 package es.upm.etsiinf.dam.coinapp.modelos;
 
 import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +8,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class Coin{
@@ -392,6 +389,15 @@ public class Coin{
                 e.printStackTrace();
                 return null;
             }
+        }
+
+        @Override
+        public String toString () {
+            return "Roi{" +
+                    "times=" + times +
+                    ", currency='" + currency + '\'' +
+                    ", percentage=" + percentage +
+                    '}';
         }
     }
 

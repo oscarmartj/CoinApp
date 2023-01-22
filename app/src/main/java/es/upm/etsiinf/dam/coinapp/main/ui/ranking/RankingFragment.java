@@ -1,7 +1,6 @@
 package es.upm.etsiinf.dam.coinapp.main.ui.ranking;
 
 import android.content.Context;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,18 +13,13 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-
-import es.upm.etsiinf.dam.coinapp.SplashActivity;
 import es.upm.etsiinf.dam.coinapp.databinding.FragmentRankingBinding;
-import es.upm.etsiinf.dam.coinapp.main.MainActivity;
 import es.upm.etsiinf.dam.coinapp.main.ui.ranking.singleextended.DetailActivity;
 import es.upm.etsiinf.dam.coinapp.modelos.Coin;
-import es.upm.etsiinf.dam.coinapp.utils.ConnectionManager;
 
 
 public class RankingFragment extends Fragment {

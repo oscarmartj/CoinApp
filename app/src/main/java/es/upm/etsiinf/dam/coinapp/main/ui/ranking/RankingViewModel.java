@@ -48,7 +48,6 @@ public class RankingViewModel extends ViewModel {
         if(isConnected()) {
             noInternet.setValue("OK");
         } else {
-            Log.i("RankingInternet","aqui entra");
             noInternet.setValue("NO");
         }
         loadMoreCoins();
@@ -78,7 +77,6 @@ public class RankingViewModel extends ViewModel {
                         case 0: //OK
                             List<Coin> newCoins = (List<Coin>)msg.obj;
                             if(newCoins != null){
-                                Log.i("newCoins",newCoins.toString());
                                 try {
                                     coinDB.insertCoins(newCoins);
                                 } catch (IOException e) {
@@ -91,7 +89,6 @@ public class RankingViewModel extends ViewModel {
                                 int currentSize = currentCoins.size();
                                 currentCoins.addAll(newCoins);
                                 coins.setValue(currentCoins);
-                                Log.i("NewCoins","Coins final ->"+currentCoins.toString());
                             }
                             isLoading = false;
                             page++;
@@ -129,7 +126,6 @@ public class RankingViewModel extends ViewModel {
                 switch (msg.what) {
                     case 0: //OK
                         List<Coin> newCoins = (List<Coin>)msg.obj;
-                        Log.i("updateCoins",newCoins.toString());
                         coins.postValue(newCoins);
                         isRefreshing.postValue(false);
                         break;

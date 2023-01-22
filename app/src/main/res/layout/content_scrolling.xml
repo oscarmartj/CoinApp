@@ -27,15 +27,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Media -->
-                <!--<ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="194dp"
-                    app:srcCompat="@drawable/defaultprofile"
-                    android:scaleType="centerCrop"
-                    /> -->
-
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_cardone"
                     android:layout_width="match_parent"
