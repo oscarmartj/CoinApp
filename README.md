@@ -16,7 +16,7 @@ DAM
 | SUM:         |      333 |     5308 |      361 |    40028 |
 
 
-#Lineas escritas por el autor
+Lineas escritas por el autor:
 
 | Language |    files |    blank |  comment |     code |
 |:---------|---------:|---------:|---------:|---------:|
